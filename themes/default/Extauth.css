@@ -1,0 +1,34 @@
+#extauth_th_icons {
+	float: left;
+	margin: 0;
+	padding: 12px 8px 0 8px;
+	line-height: 1.286em;
+}
+
+#top_section_notice {
+	min-width: 20% !important;
+}
+
+#extauth_th_icons > ul > li {
+	display: inline;
+}
+
+#agreement_box {
+	overflow: auto;
+	height: 10em;
+	border: 1px #CCC solid;
+	background: #FFFFFF;
+	padding: 1em;
+	text-align: justify;
+	margin-bottom: 1em;
+}
+
+.extauth_icons {
+	display: flex;
+	justify-content: center;
+}
+
+/* background color of social icons */
+.extstack {
+	color: #49643D;
+}
