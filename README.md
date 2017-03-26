@@ -31,12 +31,15 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
 ### Setting up Facebook ###
 * Go to https://developers.facebook.com/apps
 * Create a new App
-* Select Website with Facebook Login and enter your site URL
-* Copy your App ID and App Secret to corresponding fields in the addon settings
-* Make sure you have added a Website with URL as a Platform in App Settings
-* Make sure you have added configured your domains in App Settings
-* In Facebook Login settings, Enable Embedded Browser OAuth Login
-* Add http://YOUR-SITE-URL/hybridauth/endpoint?hauth_done=Facebook as a Valid OAuth Redirect URI
+* Select Basic settings
+    * Fill out required fields such as the application name and description.
+    * Enter your site name as the App Domain
+    * Select Add platform and choose website, enter the url to your site
+* Select + Add Product
+    * Select Facebook Login
+    * Select Website
+* Select Facbook Login Settings
+    * Enter the Valid OAuth redirect http://YOUR-SITE-URL/hybridauth/endpoint?hauth_done=Facebook
 
 ### Setting up Twitter ###
 * Go to https://dev.twitter.com/apps/new

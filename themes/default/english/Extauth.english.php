@@ -43,13 +43,12 @@ $txt['ext_enable_facebook'] = 'Enable Facebook Login';
 $txt['ext_key_facebook'] = 'Facebook application id';
 $txt['ext_secret_facebook'] = 'Facebook application secret';
 $txt['ext_api_url_facebook'] = '<a class="linkbutton" href="https://developers.facebook.com/apps" target="_blank">Key Registration</a>';
-$txt['ext_api_url_facebook_help'] = 'Create a new App 
-Select Website with Facebook Login and enter your site URL 
-Copy your App ID and App Secret to corresponding fields in the addon settings 
-Make sure you have added a Website with URL as a Platform in App Settings 
-Make sure you have added configured your domains in App Settings 
-In Facebook Login settings, Enable Embedded Browser OAuth Login 
-Add ' . $boardurl . '/sources/ext/hybridauth?hauth_done=Facebook as a Valid OAuth Redirect URI';
+$txt['ext_api_url_facebook_help'] = 'Create a new app 
+Select Basic settings, Fill out required fields such as the application name and description. Enter your site name as the App Domain 
+Select Add platform and choose website, enter the url to your site 
+Select + Add Product Select Facebook Login Select Website 
+Select Facbook Login Settings Enter the Valid OAuth redirect as ' . $boardurl . '/sources/ext/hybridauth?hauth_done=Facebook 
+Copy your App ID and App Secret to corresponding fields in the addon settings';
 
 $txt['ext_enable_google'] = 'Enable Google Login';
 $txt['ext_key_google'] = 'Google client id';
