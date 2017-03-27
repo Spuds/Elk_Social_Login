@@ -24,6 +24,7 @@ $hook_functions = array(
 	'integrate_action_register_before' => array('function' => 'iarb_extauth', 'file' => 'SOURCEDIR/Extauth.integration.php'),
 	'integrate_delete_members' => array('function' => 'idm_extauth', 'file' => 'SOURCEDIR/Extauth.integration.php'),
 	'integrate_load_theme' => array('function' => 'ilt_extauth', 'file' => 'SOURCEDIR/Extauth.integration.php'),
+	'integrate_init_theme' => array('function' => 'iit_extauth', 'file' => 'SOURCEDIR/Extauth.integration.php'),
 );
 
 // Adding or removing them?
