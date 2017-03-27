@@ -47,12 +47,12 @@ $dbtbl->db_create_table($db_prefix . 'oauth2_authentications',
 		array(
 			'name' => 'provider_uid',
 			'type' => 'varchar',
-			'size' => 32,
+			'size' => 64,
 		),
 		array(
 			'name' => 'username',
 			'type' => 'varchar',
-			'size' => 32,
+			'size' => 64,
 		),
 	),
 	array(
