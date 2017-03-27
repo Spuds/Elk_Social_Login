@@ -53,13 +53,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
             $this->scope = $scope;
         }
 
-        $trustForwarded = isset($this->config['trustForwarded']) ? (bool)$this->config['trustForwarded'] : false;
-
         $this->api = new FacebookSDK([
             'app_id' => $this->config["keys"]["id"],
             'app_secret' => $this->config["keys"]["secret"],
             'default_graph_version' => 'v2.8',
-            'trustForwarded' => $trustForwarded,
         ]);
     }
 

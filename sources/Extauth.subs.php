@@ -170,7 +170,6 @@ function extauth_config()
 			// Special bits
 			if ($service === 'facebook')
 			{
-				$enabled[ucfirst($service)]['trustForwarded'] = false;
 				$enabled[ucfirst($service)]['scope'] = array('email', 'user_about_me');
 			}
 			elseif ($service === 'google')

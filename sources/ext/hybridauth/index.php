@@ -6,7 +6,7 @@
 */
 
 // ------------------------------------------------------------------------
-// ElkArte uses its own sessions, we need to evoke them
+// ElkArte uses its own sessions, we need to invoke them
 // ------------------------------------------------------------------------
 require_once( "../../../SSI.php" );
 
