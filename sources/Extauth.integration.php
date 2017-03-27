@@ -166,6 +166,19 @@ function ilt_extauth()
 }
 
 /**
+ * Integration hook, integrate_init_theme, Called from Load.php,
+ *
+ * Used here to turn on FA support in ElkArte 1.1
+ */
+function iit_extauth()
+{
+	global $modSettings;
+
+	if (empty($modSettings['require_font-awesome']))
+		$modSettings['require_font-awesome'] = true;
+}
+
+/**
  * Integration hook, integrate_delete_members, called from Members.subs
  *
  * Used to remove social logins on account deletion
