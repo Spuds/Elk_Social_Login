@@ -477,9 +477,6 @@ class Extauth_Controller extends Action_Controller
 		require_once(SUBSDIR . '/Auth.subs.php');
 
 		// Activation required?
-		//	if (!empty($modSettings['registration_method']) &&
-		// ($modSettings['registration_method'] != '1' || empty($modSettings['extauth_noemail'])))
-
 		$require = empty($modSettings['registration_method']) || ($modSettings['registration_method'] == '1' && !empty($modSettings['extauth_noemail']))
 			? 'nothing'
 			: ($modSettings['registration_method'] == 1
@@ -617,8 +614,8 @@ class Extauth_Controller extends Action_Controller
 		else
 		{
 			call_integration_hook('integrate_activate', array($regOptions['username']));
-			setLoginCookie(60 * $modSettings['cookieTime'], $memberID, hash('sha256', Util::strtolower($regOptions['username']) . $regOptions['password'] . $regOptions['register_vars']['password_salt']));
-			redirectexit('action=extauth;provider=' .  $_SESSION['extauth_info']['provider']);
+			setLoginCookie(60 * $modSettings['cookieTime'], $memberID, hash('sha256', $regOptions['password'] . $regOptions['register_vars']['password_salt']));
+			redirectexit('action=extauth;provider=' .  $_SESSION['extauth_info']['provider'], $context['server']['needs_login_fix']);
 		}
 
 		return true;
