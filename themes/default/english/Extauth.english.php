@@ -9,9 +9,9 @@ $txt['extauth_missing_requirements'] = '<p class="error">You must have both the 
 $txt['connected_accounts'] = 'Connected Accounts';
 $txt['connect_accounts'] = 'Connect Accounts';
 $txt['provider_services'] = 'OAuth Providers';
-$txt['extauth_login'] = 'Login with your Social Account';
-$txt['extauth_register'] = 'Register using your Social Account';
-$txt['extauth_register_desc'] = 'You can sign-up using an <strong>existing</strong> social network account, or continue below to register for a new account here.';
+$txt['extauth_login'] = 'Login with your Social Network Account';
+$txt['extauth_register'] = 'Register using your Social Network Account';
+$txt['extauth_register_desc'] = 'You can sign-up either by using an <big><u><strong>existing</strong></u></big> social network account, <big><u><strong>or continue below</strong></u></big> to register for a new account here.';
 $txt['connected_accounts_desc'] = 'These are external accounts that can be connected to your account on this site. By linking to an external account, you can use that service to login here.';
 $txt['disconnect'] = 'Disconnect Account';
 $txt['connect'] = 'Connect using';
