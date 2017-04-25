@@ -135,7 +135,10 @@ function iarb_extauth()
 		require_once(SUBSDIR . '/Extauth.subs.php');
 		$context['enabled_providers'] = extauth_enabled_providers();
 
-		Template_Layers::getInstance()->addBegin('extauth_register');
+		if ($modSettings['requireAgreement'] && empty($_POST['accept_agreement']))
+		{
+			Template_Layers::getInstance()->addBegin('extauth_register');
+		}
 	}
 }
 
