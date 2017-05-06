@@ -1,107 +1,170 @@
 <?php
 
 /* !
- * HybridAuth
- * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
- * (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+ * Hybridauth
+ * https://hybridauth.github.io/hybridauth | https://github.com/hybridauth/hybridauth
+ * (c) 2017 Hybridauth authors | https://hybridauth.github.io/license.html
  */
 
 /**
- * Linkedin OAuth2 Class
- *
- * @package             HybridAuth providers package
- * @author              Kimball Bighorse <kbighorse@yahoo.com>
- * @version             0.1
- * @license             BSD License
- */
-
-/**
- * Hybrid_Providers_Linkedin - Linkedin provider adapter based on OAuth2 protocol
+ * Hybrid_Providers_LinkedIn OAuth2 provider adapter.
  */
 class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
-	/**
-	 * Adapter initializer
-	 */
-	function initialize() {
-		if (!$this->config["keys"]["key"] || !$this->config["keys"]["secret"]) {
-			throw new Exception("Your application key and secret are required in order to connect to {$this->providerId}.", 4);
-		}
 
-		// include OAuth2 client and Paypal client
-		require_once Hybrid_Auth::$config["path_libraries"] . "OAuth/OAuth2Client.php";
+    /**
+     * {@inheritdoc}
+     */
+    public $scope = "r_basicprofile r_emailaddress";
 
-		// create a new OAuth2 client instance
-		$this->api = new OAuth2Client($this->config["keys"]["key"],
-			$this->config["keys"]["secret"],
-			$this->endpoint);
+    /**
+     * {@inheritdoc}
+     */
+    function initialize() {
+        parent::initialize();
 
-		// If we have an access token, set it
-		if($this->token("access_token")) {
-			$this->api->access_token            = $this->token("access_token");
-			$this->api->refresh_token           = $this->token("refresh_token");
-			$this->api->access_token_expires_in = $this->token("expires_in");
-			$this->api->access_token_expires_at = $this->token("expires_at");
-		}
+        // Provider api end-points.
+        $this->api->api_base_url = "https://api.linkedin.com/v1/";
+        $this->api->authorize_url = "https://www.linkedin.com/oauth/v2/authorization";
+        $this->api->token_url = "https://www.linkedin.com/oauth/v2/accessToken";
+    }
 
-		// Provider api end-points
-		$this->api->authorize_url  = "https://www.linkedin.com/oauth/v2/authorization";
-		$this->api->token_url      = "https://www.linkedin.com/oauth/v2/accessToken";
-		$this->api->token_info_url = "https://www.linkedin.com/oauth/v2";
-	}
+    /**
+     * {@inheritdoc}
+     */
+    function loginBegin() {
+        if (is_array($this->scope)) {
+            $this->scope = implode(" ", $this->scope);
+        }
+        parent::loginBegin();
+    }
 
-	/**
-	 * load the user profile from the IDp api client
-	 */
-	function getUserProfile() {
-		$fields = array(
-			'email-address',
-			'id',
-			'first-name',
-			'last-name',
-			'picture-url',
-			'public-profile-url',
-			'summary',
-			'formatted-name',
-			'positions'
-		);
-		$this->api->curl_header = array(
-			'Connection: Keep-Alive',
-			'Authorization: Bearer ' . $this->api->access_token,
-		);
+    /**
+     * {@inheritdoc}
+     *
+     * @see https://developer.linkedin.com/docs/rest-api
+     */
+    function getUserProfile() {
+        // Refresh tokens if needed.
+        $this->setHeaders("token");
+        $this->refreshToken();
 
-		// refresh tokens if needed
-		$this->refreshToken();
+        // https://developer.linkedin.com/docs/fields.
+        $fields = isset($this->config["fields"]) ? $this->config["fields"] : [
+            "id",
+            "email-address",
+            "first-name",
+            "last-name",
+            "headline",
+            "location",
+            "industry",
+            "picture-url",
+            "public-profile-url",
+        ];
 
-		// ask linkedin api for user info
-		$base_url = "https://api.linkedin.com/v1/people/~:";
-		$url = $base_url . "(" . implode(",", $fields) . ")";
-		$params = array('format' => 'json');
+        $this->setHeaders();
+        $response = $this->api->get(
+            "people/~:(" . implode(",", $fields) . ")",
+            array(
+                "format" => "json",
+            )
+        );
 
-		try {
-			$data = $this->api->api($url, "GET", $params, true);
-		} catch (Exception $e) {
-			throw new Exception("User profile request failed! {$this->providerId} returned an error: {$e->getMessage()}", 6, $e);
-		}
+        if (!isset($response->id)) {
+            throw new Exception("User profile request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData($response), 6);
+        }
 
-		$this->user->profile->email         = $data->emailAddress;
-		$this->user->profile->emailVerified = $data->emailAddress;
-		$this->user->profile->identifier    = $data->id;
-		$this->user->profile->firstName     = $data->firstName;
-		$this->user->profile->lastName      = $data->lastName;
-		$this->user->profile->profileURL    = $data->publicProfileUrl;
-		$this->user->profile->description   = $data->summary;
-		$this->user->profile->displayName   = $data->formattedName;
+        $this->user->profile->identifier = isset($response->id) ? $response->id : "";
+        $this->user->profile->firstName = isset($response->firstName) ? $response->firstName : "";
+        $this->user->profile->lastName = isset($response->lastName) ? $response->lastName : "";
+        $this->user->profile->photoURL = isset($response->pictureUrl) ? $response->pictureUrl : "";
+        $this->user->profile->profileURL = isset($response->publicProfileUrl) ? $response->publicProfileUrl : "";
+        $this->user->profile->email = isset($response->emailAddress) ? $response->emailAddress : "";
+        $this->user->profile->description = isset($response->headline) ? $response->headline : "";
+        $this->user->profile->country = isset($response->location) ? $response->location->name : "";
+        $this->user->profile->emailVerified = $this->user->profile->email;
+        $this->user->profile->displayName = trim($this->user->profile->firstName . " " . $this->user->profile->lastName);
 
-		if ($data->positions) {
-			$this->user->profile->job_title = $data->positions->values[0]->title;
-			$this->user->profile->organization_name = $data->positions->values[0]->company->name;
-		}
-		if (isset($data->pictureUrl)) {
-			$this->user->profile->photoURL = $data->pictureUrl;
-		} else {
-			$this->user->profile->photoURL = "";
-		}
+        return $this->user->profile;
+    }
 
-		return $this->user->profile;
-	}
+    /**
+     * {@inheritdoc}
+     *
+     * @param array $status
+     *   An associative array containing:
+     *   - content: A collection of fields describing the shared content.
+     *   - comment: A comment by the member to associated with the share.
+     *   - visibility: A collection of visibility information about the share.
+     *
+     * @return object
+     *   An object containing:
+     *   - updateKey - A unique ID for the shared content posting that was just created.
+     *   - updateUrl - A direct link to the newly shared content on LinkedIn.com that you can direct the user's web browser to.
+     * @throws Exception
+     * @see https://developer.linkedin.com/docs/share-on-linkedin
+     */
+    function setUserStatus($status) {
+        // Refresh tokens if needed.
+        $this->setHeaders("token");
+        $this->refreshToken();
+
+        try {
+            // Define default visibility.
+            if (!isset($status["visibility"])) {
+                $status["visibility"]["code"] = "anyone";
+            }
+
+            $this->setHeaders("share");
+            $response = $this->api->post(
+                "people/~/shares?format=json",
+                array(
+                    "body" => $status,
+                )
+            );
+        } catch (Exception $e) {
+            throw new Exception("Update user status failed! {$this->providerId} returned an error: {$e->getMessage()}", 0, $e);
+        }
+
+        if (!isset($response->updateKey)) {
+            throw new Exception("Update user status failed! {$this->providerId} returned an error: {$response->message}", $response->errorCode);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Set correct request headers.
+     *
+     * @param string $api_type
+     *   (optional) Specify api type.
+     *
+     * @return void
+     */
+    private function setHeaders($api_type = null) {
+        $this->api->curl_header = array(
+            "Authorization: Bearer {$this->api->access_token}",
+        );
+
+        switch ($api_type) {
+            case "share":
+                $this->api->curl_header = array_merge(
+                    $this->api->curl_header,
+                    array(
+                        "Content-Type: application/json",
+                        "x-li-format: json",
+                    )
+                );
+                break;
+
+            case "token":
+                $this->api->curl_header = array_merge(
+                    $this->api->curl_header,
+                    array(
+                        "Content-Type: application/x-www-form-urlencoded",
+                    )
+                );
+                break;
+        }
+    }
+
 }
