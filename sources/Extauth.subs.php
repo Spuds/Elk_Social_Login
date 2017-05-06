@@ -177,6 +177,10 @@ function extauth_config()
 				$enabled[ucfirst($service)]['scope'] = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 				$enabled[ucfirst($service)]['access_type'] = 'online';
 			}
+			elseif ($service === 'yahoo')
+			{
+				$enabled[ucfirst($service)]['scope'] = array('sdps-r');
+			}
 		}
 	}
 
