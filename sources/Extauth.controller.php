@@ -206,6 +206,8 @@ class Extauth_Controller extends Action_Controller
 
 		// Get what we can about this user from the provider
 		$this->profile = $adapter->getUserProfile();
+
+		unset($_SESSION['request_referer']);
 	}
 
 	/**

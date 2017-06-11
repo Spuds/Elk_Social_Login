@@ -3,7 +3,7 @@ global $boardurl;
 
 // Admin / Profile / Etc. strings
 $txt['extauth_master'] = 'Enable the addon';
-$txt['extauth_loginbar'] = 'Show login icons next to the login bar (if enabled)';
+$txt['extauth_loginbar'] = 'Show social login icons next to the login bar (if enabled)';
 $txt['extauth_noemail'] = 'Don\'t require email validation if registering with social media.';
 $txt['extauth_missing_requirements'] = '<p class="error">You must have both the Curl and JSON modules enabled on your server.</p>';
 $txt['connected_accounts'] = 'Connected Accounts';
@@ -11,13 +11,13 @@ $txt['connect_accounts'] = 'Connect Accounts';
 $txt['provider_services'] = 'OAuth Providers';
 $txt['extauth_login'] = 'Login with your Social Network Account';
 $txt['extauth_register'] = 'Register using your Social Network Account';
-$txt['extauth_register_desc'] = 'You can sign-up either by using an <big><u><strong>existing</strong></u></big> social network account, <big><u><strong>or continue below</strong></u></big> to register for a new account here.';
+$txt['extauth_register_desc'] = 'You can register either by choosing your <big><u><strong>existing</strong></u></big> social network account, <big><u><strong>or continue below</strong></u></big> to register for a new account.';
 $txt['connected_accounts_desc'] = 'These are external accounts that can be connected to your account on this site. By linking to an external account, you can use that service to login here.';
 $txt['disconnect'] = 'Disconnect Account';
 $txt['connect'] = 'Connect using';
 $txt['register_with'] = 'Register using';
 $txt['extauth_reg_notice'] = 'If you have an <strong>existing account</strong> on this site, then <a class="linkbutton" href="' . $boardurl . '/index.php?action=login">Login Here</a> and make connections (Modify Profile -> Connect Accounts) to the social networks you wish to use.';
-$txt['extauth_register'] = 'Register using external account';
+$txt['extauth_register'] = 'Register using your existing Social Network Account';
 $txt['provider_services_settings'] = 'Provider Account Keys';
 $txt['provider_services_settings_desc'] = 'Select the social networks that you would like to use by ticking their checkboxes.
 <br />
