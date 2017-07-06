@@ -9,7 +9,7 @@
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.0
+ * @version 1.0.1
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -201,11 +201,22 @@ class Extauth_Controller extends Action_Controller
 	 */
 	private function getAdapterProfile()
 	{
-		// Try to authenticate the user with a given provider.
-		$adapter = $this->hybridauth->authenticate($this->provider);
+		try
+		{
+			// Try to authenticate the user with a given provider.
+			$adapter = $this->hybridauth->authenticate($this->provider);
 
-		// Get what we can about this user from the provider
-		$this->profile = $adapter->getUserProfile();
+			// Get what we can about this user from the provider
+			$this->profile = $adapter->getUserProfile();
+		}
+		catch (Exception $e)
+		{
+			// If we fail, log out all providers and try again
+			$this->hybridauth->logoutAllProviders();
+			$this->initHybridAuth();
+			$adapter = $this->hybridauth->authenticate($this->provider);
+			$this->profile = $adapter->getUserProfile();
+		}
 
 		unset($_SESSION['request_referer']);
 	}
