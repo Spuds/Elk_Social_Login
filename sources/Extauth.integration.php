@@ -129,7 +129,7 @@ function iarb_extauth()
 	}
 
 	// Registration Screen ?
-	if ($context['site_action'] === 'register' && (isset($_GET['action']) && $_GET['action'] === 'register'))
+	if ((!empty($context['site_action']) && $context['site_action'] === 'register') && (isset($_GET['action']) && $_GET['action'] === 'register'))
 	{
 		// Load the enabled providers
 		require_once(SUBSDIR . '/Extauth.subs.php');
@@ -178,7 +178,9 @@ function iit_extauth()
 	global $modSettings;
 
 	if (empty($modSettings['require_font-awesome']))
+	{
 		$modSettings['require_font-awesome'] = true;
+	}
 }
 
 /**
