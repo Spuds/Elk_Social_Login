@@ -9,7 +9,7 @@
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.0
+ * @version 1.0.1
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -104,7 +104,7 @@ function iaab_extauth()
 	}
 
 	// Login Screen ?
-	if ($context['site_action'] === 'auth' && (isset($_GET['action']) && $_GET['action'] === 'login'))
+	if ((!empty($context['site_action']) && $context['site_action'] === 'auth') && (isset($_GET['action']) && $_GET['action'] === 'login'))
 	{
 		// Load the enabled providers
 		require_once(SUBSDIR . '/Extauth.subs.php');
