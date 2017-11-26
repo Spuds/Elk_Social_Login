@@ -305,6 +305,11 @@ function template_extauth_login_below()
 {
 	global $context, $scripturl, $txt;
 
+	if (empty($context['enabled_providers']))
+	{
+		return '';
+	}
+
 	echo '
 	<div class="login">
 		<h2 class="category_header hdicon cat_img_login">
