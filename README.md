@@ -12,7 +12,7 @@ Each social network will **require that you** create an external application lin
 
 The link to setup your OAuth accounts for these sites is provided in the Admin Panel along with general steps of what to do for each API.  Most important will be the Redirect URIs which is provided in the help for each.
 
-## Features ##
+## Features
 
 * Allows a single ElkArte user profile to be connected to multiple social provider accounts
 * Follows Elkarte's registration workflow but streamlined with provider authorization.
@@ -26,9 +26,10 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
 
 **New users** can select a social login icon which will begin a registration process that will Connect a new site account to the chosen social site.  They will still have to accept your site agreement and any required profile fields you have enabled including email and userid.
 
-## Provider Setup ##
+## Provider Setup
 
-### Setting up Facebook ###
+### Setting up Facebook
+
 * Go to https://developers.facebook.com/apps
 * Create a new App
 * Select Basic settings
@@ -41,7 +42,8 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
 * Select Facbook Login Settings
     * Enter the Valid OAuth redirect http://YOUR-SITE-URL/hybridauth/endpoint?hauth_done=Facebook
 
-### Setting up Twitter ###
+### Setting up Twitter
+
 * Go to https://dev.twitter.com/apps/new
 * Create a new application
 * Enter a Callback URL: http://YOUR-SITE-URL/hybridauth/endpoint?hauth.done=Twitter
@@ -49,7 +51,8 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
 * Check Allow this application to be used to Sign in with Twitter.
 * Under Permissions select Read only access.
 
-### Setting up Google ###
+### Setting up Google
+
 * Go to https://code.google.com/apis/console/
 * Create a new project, you will then see the API Manager for you new Project
 * Select OAuth consent screen.  The consent screen will be shown to users whenever you request access to their
@@ -61,14 +64,16 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
 * Copy your Client ID and Client secret to corresponding fields in the addon settings
 * Enable theGoogle+ scopes ```Google+``` API
 
-### Setting up LinkedIn ###
+### Setting up LinkedIn
+
 * Go to https://www.linkedin.com/secure/developer
 * Create new application
     * Under default permissions select r_basicprofile and r_emailaddress
     * The Oauth2 Authorized Redirect URLs: http://YOUR-SITE-URL/hybridauth/endpoint?hauth.done=Linkedin
 * Copy the Client ID and Client secret to corresponding fields in the addon settings
 
-### Setting up Yahoo! ###
+### Setting up Yahoo!
+
 * Go to https://developer.yahoo.com/apps/
 * Create new Application
     * Fill out the project information
