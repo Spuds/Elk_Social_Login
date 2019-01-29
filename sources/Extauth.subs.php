@@ -8,17 +8,12 @@
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
- * @version 1.0.0
+ * @version 1.0.2
  *
  * This addon is based on code from:
  * @author Antony Derham
  * @copyright 2014 Antony Derham
  */
-
-if (!defined('ELK'))
-{
-	die('No access...');
-}
 
 /**
  * Retrieve a member's settings based on the provider and provider uid
@@ -168,17 +163,14 @@ function extauth_config()
 			);
 
 			// Special bits
-			if ($service === 'facebook')
+			if ($service === 'google')
 			{
-				$enabled[ucfirst($service)]['scope'] = array('email', 'user_about_me');
-			}
-			elseif ($service === 'google')
-			{
-				$enabled[ucfirst($service)]['scope'] = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 				$enabled[ucfirst($service)]['access_type'] = 'online';
 			}
 			elseif ($service === 'yahoo')
 			{
+				// Read (Public) Profile
+				// https://developer.yahoo.com/oauth2/guide/yahoo_scopes/
 				$enabled[ucfirst($service)]['scope'] = array('sdps-r');
 			}
 		}

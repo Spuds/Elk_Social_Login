@@ -8,19 +8,13 @@
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
- *
- * @version 1.0.1
+ * @version 1.0.2
  *
  * This addon is based on code from:
  * @author Antony Derham
  * @copyright 2014 Antony Derham
  *
  */
-
-if (!defined('ELK'))
-{
-	die('No access...');
-}
 
 /**
  * ExtAuth_Controller class, deals with authenticating external accounts
@@ -542,18 +536,18 @@ class Extauth_Controller extends Action_Controller
 				}
 
 				// Any masks to apply?
-				if ($row['type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
+				if ($row['type'] === 'text' && !empty($row['mask']) && $row['mask'] !== 'none')
 				{
 					// @todo We never error on this - just ignore it at the moment...
-					if ($row['mask'] == 'email' && !isValidEmail($value))
+					if ($row['mask'] === 'email' && !isValidEmail($value))
 					{
 						$reg_errors->addError(array('custom_field_invalid_email', array($row['name'])));
 					}
-					elseif ($row['mask'] == 'number' && preg_match('~[^\d]~', $value))
+					elseif ($row['mask'] === 'number' && preg_match('~[^\d]~', $value))
 					{
 						$reg_errors->addError(array('custom_field_not_number', array($row['name'])));
 					}
-					elseif (substr($row['mask'], 0, 5) == 'regex' && trim($value) !== '' && preg_match(substr($row['mask'], 5), $value) === 0)
+					elseif (substr($row['mask'], 0, 5) === 'regex' && trim($value) !== '' && preg_match(substr($row['mask'], 5), $value) === 0)
 					{
 						$reg_errors->addError(array('custom_field_inproper_format', array($row['name'])));
 					}

@@ -8,19 +8,13 @@
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
- *
- * @version 1.0.1
+ * @version 1.0.2
  *
  * This addon is based on code from:
  * @author Antony Derham
  * @copyright 2014 Antony Derham
  *
  */
-
-if (!defined('ELK'))
-{
-	die('No access...');
-}
 
 /**
  * Profile Menu Hook, integrate_profile_areas, called from Profile.controller.php
