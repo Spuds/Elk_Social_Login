@@ -23,7 +23,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
      * @link https://developers.facebook.com/docs/facebook-login/permissions
      * @var array $scope
      */
-    public $scope = ['email', 'user_about_me', 'user_birthday', 'user_hometown', 'user_location', 'user_website', 'publish_actions', 'read_custom_friendlists'];
+    public $scope = array('email', 'public_profile');
 
     /**
      * Provider API client
@@ -56,12 +56,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         // Include 3rd-party SDK.
         $this->autoLoaderInit();
 
-        $this->api = new FacebookSDK([
+        $this->api = new FacebookSDK(array(
             'app_id' => $this->config["keys"]["id"],
             'app_secret' => $this->config["keys"]["secret"],
             'default_graph_version' => 'v2.8',
             'trustForwarded' => $trustForwarded,
-        ]);
+		));
     }
 
     /**
@@ -178,8 +178,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
     * {@inheridoc}
     */
    function getUserPages($writableonly = false) {
-       if (( isset($this->config['scope']) && strpos($this->config['scope'], 'manage_pages') === false ) || (!isset($this->config['scope']) && strpos($this->scope, 'manage_pages') === false ))
-           throw new Exception("User status requires manage_page permission!");
+       if (!in_array('manage_pages', $this->scope)) {
+           throw new Exception("Get user pages requires manage_page permission!");
+       }
 
        try {
            $pages = $this->api->get("/me/accounts", $this->token('access_token'));
@@ -211,7 +212,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
      */
     function getUserProfile() {
         try {
-            $fields = [
+            $fields = array(
                 'id',
                 'name',
                 'first_name',
@@ -224,8 +225,9 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
                 'email',
                 'hometown',
                 'location',
-                'birthday'
-            ];
+                'birthday',
+				'short_name'
+            );
             $response = $this->api->get('/me?fields=' . implode(',', $fields), $this->token('access_token'));
             $data = $response->getDecodedBody();
         } catch (FacebookSDKException $e) {
@@ -234,7 +236,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 
         // Store the user profile.
         $this->user->profile->identifier = (array_key_exists('id', $data)) ? $data['id'] : "";
-        $this->user->profile->displayName = (array_key_exists('name', $data)) ? $data['name'] : "";
+        $this->user->profile->displayName = (array_key_exists('short_name', $data)) ? $data['short_name'] : ((array_key_exists('name', $data)) ? $data['name'] : "");
         $this->user->profile->firstName = (array_key_exists('first_name', $data)) ? $data['first_name'] : "";
         $this->user->profile->lastName = (array_key_exists('last_name', $data)) ? $data['last_name'] : "";
         $this->user->profile->photoURL = $this->getUserPhoto($this->user->profile->identifier);
@@ -278,8 +280,12 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
      * {@inheritdoc}
      */
     function getUserContacts() {
+        if (!in_array('user_friends', $this->scope)) {
+           throw new Exception("Get user contacts requires user_friends permission!");
+        }
+
         $apiCall = '?fields=link,name';
-        $returnedContacts = [];
+        $returnedContacts = array();
         $pagedList = true;
 
         while ($pagedList) {
@@ -303,7 +309,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
             $returnedContacts = array_merge($returnedContacts, $response['data']);
         }
 
-        $contacts = [];
+        $contacts = array();
         foreach ($returnedContacts as $item) {
 
             $uc = new Hybrid_User_Contact();
@@ -339,10 +345,10 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
         }
 
         if (!$response || !count($response['data'])) {
-            return [];
+            return array();
         }
 
-        $activities = [];
+        $activities = array();
         foreach ($response['data'] as $item) {
 
             $ua = new Hybrid_User_Activity();
