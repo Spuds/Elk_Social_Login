@@ -225,8 +225,6 @@ class Extauth_Controller extends Action_Controller
 		// No provider or user the we go back.
 		if (!empty($this->provider) && !empty($this->member))
 		{
-			checkSession('get');
-
 			// Make an OAuth connection to the provider
 			try
 			{
@@ -262,8 +260,6 @@ class Extauth_Controller extends Action_Controller
 	 */
 	public function action_deauth()
 	{
-		checkSession('get');
-
 		// If they are using this, log them out
 		try
 		{

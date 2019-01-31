@@ -53,14 +53,13 @@ Copy your App ID and App Secret to corresponding fields in the addon settings';
 $txt['ext_enable_google'] = 'Enable Google Login';
 $txt['ext_key_google'] = 'Google client id';
 $txt['ext_secret_google'] = 'Google client secret';
-$txt['ext_api_url_google'] = '<a class="linkbutton" href="https://code.google.com/apis/console/" target="_blank">Key Registration</a>';
+$txt['ext_api_url_google'] = '<a class="linkbutton" href="https://console.cloud.google.com/apis/credentials" target="_blank">Key Registration</a>';
 $txt['ext_api_url_google_help'] = 'Start a new project, you will then see the API Manager for you new Project. 
 Select OAuth consent screen.  The consent screen will be shown to users whenever you request access to their 
 private data using your client ID. Fill out any required fields such as the site url and logo 
 Select Credentials -> Create Credentials -> OAuth Client ID. 
 Select Web application, enter this URL in the [Authorized redirect URIs] ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Google 
-Copy and past the created application credentials (ID and Secret) to the corresponding fields in the addon settings. 
-Lastly enable the GooglePlus+ API for this application.';
+Copy and past the created application credentials (ID and Secret) to the corresponding fields in the addon settings.';
 
 $txt['ext_enable_twitter'] = 'Enable Twitter Login';
 $txt['ext_key_twitter'] = 'Twitter consumer key';
@@ -100,4 +99,13 @@ $txt['ext_api_url_github'] = '<a class="linkbutton" href="https://github.com/set
 $txt['ext_api_url_github_help'] = 'Register a new OAuth application. 
 Enter the Application Name, and your website home URL. 
 Use the following for the Authorization callback URL ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Github 
+Enter the client id/secret to the corresponding fields in the addon settings';
+
+$txt['ext_enable_amazon'] = 'Enable Amazon Login';
+$txt['ext_key_amazon'] = 'Amazon client id';
+$txt['ext_secret_amazon'] = 'Amazon client secret';
+$txt['ext_api_url_amazon'] = '<a class="linkbutton" href="https://login.amazon.com/website" target="_blank">Key Registration</a>';
+$txt['ext_api_url_amazon_help'] = 'Register a new application. 
+Enter the Application Name, and your website home URL. 
+Use the following for the Authorization callback URL ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Amazon 
 Enter the client id/secret to the corresponding fields in the addon settings';
