@@ -62,7 +62,6 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
     * Application Type is Web Application
     * Authorized Redirect URIs - enter the Authentication URL http://YOUR-SITE-URL/hybridauth/endpoint?hauth.done=Google
 * Copy your Client ID and Client secret to corresponding fields in the addon settings
-* Enable theGoogle+ scopes ```Google+``` API
 
 ### Setting up LinkedIn
 
