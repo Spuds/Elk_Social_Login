@@ -9,18 +9,13 @@
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.0
+ * @version 1.0.3
  *
  * This addon is based on code from:
  * @author Antony Derham
  * @copyright 2014 Antony Derham
  *
  */
-
-if (!defined('ELK'))
-{
-	die('No access...');
-}
 
 /**
  * ExtauthAdmin_Controller class, deals with site settings for external authentication
