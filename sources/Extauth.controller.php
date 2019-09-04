@@ -3,12 +3,13 @@
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2017 Spuds
+ * @copyright (c) 2019 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
- * @version 1.0.3
+ *
+ * @version 1.0.5
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -404,7 +405,8 @@ class Extauth_Controller extends Action_Controller
 
 		// Were there any errors?
 		$context['registration_errors'] = array();
-		$reg_errors = Error_Context::context('register', 0);
+
+		$reg_errors = $this->initError();
 		if ($reg_errors->hasErrors())
 		{
 			$context['registration_errors'] = $reg_errors->prepareErrors();
@@ -417,6 +419,23 @@ class Extauth_Controller extends Action_Controller
 	}
 
 	/**
+	 * Initialize the proper error context handler for the forum
+	 */
+	private function initError()
+	{
+		if (defined('FORUM_VERSION') && substr(FORUM_VERSION, 8, 3) === '1.1')
+		{
+			$reg_errors = ErrorContext::context('register', 0);
+		}
+		else
+		{
+			$reg_errors = Error_Context::context('register', 0);
+		}
+
+		return $reg_errors;
+	}
+
+	/**
 	 * Actually register the member.
 	 *
 	 * - Modified version of standard action_register2 to work with external authentications
@@ -426,7 +445,7 @@ class Extauth_Controller extends Action_Controller
 		global $txt, $modSettings, $context, $user_info;
 
 		// Start collecting together any errors.
-		$reg_errors = Error_Context::context('register', 0);
+		$reg_errors = $this->initError();
 
 		// Check they are who they should be
 		checkSession();

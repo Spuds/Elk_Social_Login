@@ -9,7 +9,7 @@
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.3
+ * @version 1.0.5
  *
  * This addon is based on code from:
  * @author Antony Derham

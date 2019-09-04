@@ -10,7 +10,7 @@
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.3
+ * @version 1.0.5
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -21,7 +21,7 @@
 <package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:elk="http://www.elkarte.net/">
 	<id>Spuds:ExternalAuth</id>
 	<name>External Authentication</name>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<type>addon</type>
 	<install for="1.0 - 1.0.99">
 		<readme type="inline">This will install External Authentication Addon for Elkarte.</readme>

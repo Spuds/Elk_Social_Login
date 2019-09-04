@@ -17,7 +17,7 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
 * Allows a single ElkArte user profile to be connected to multiple social provider accounts
 * Follows Elkarte's registration workflow but streamlined with provider authorization.
 * Attempt to fetch some profile information from the social site during registartion (avatar, gender, website, etc) access depends on each social site.
-* Allows users to authorize / deauthorize providers in their account settings (Modify Profile -> Connected Accounts)
+* Allows users to authorize / de-authorize providers in their account settings (Modify Profile -> Connected Accounts)
 * Allows admin to selectively enable / disable providers
 * Allows for one button login to connected accounts
 
