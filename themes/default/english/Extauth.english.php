@@ -16,7 +16,7 @@ $txt['connected_accounts_desc'] = 'These are external accounts that can be conne
 $txt['disconnect'] = 'Disconnect Account';
 $txt['connect'] = 'Connect using';
 $txt['register_with'] = 'Register using';
-$txt['extauth_reg_notice'] = 'If you have an <strong>existing account</strong> on this site, then <a class="linkbutton" href="' . $boardurl . '/index.php?action=login">Login Here</a> and make connections (Modify Profile -> Connect Accounts) to the social networks you wish to use.';
+$txt['extauth_reg_notice'] = 'If you already have an <strong>existing account</strong> on this site, then simply <a class="linkbutton" href="' . $boardurl . '/index.php?action=login">Login</a> normally and then make connections (Modify Profile -> Connect Accounts) to the social networks you wish to use.';
 $txt['extauth_register'] = 'Register using your existing Social Network Account';
 $txt['provider_services_settings'] = 'Provider Account Keys';
 $txt['provider_services_settings_desc'] = 'Select the social networks that you would like to use by ticking their checkboxes.
@@ -47,7 +47,7 @@ $txt['ext_api_url_facebook_help'] = 'Create a new app
 Select Basic settings, Fill out required fields such as the application name and description. Enter your site name as the App Domain 
 Select Add platform and choose website, enter the url to your site 
 Select + Add Product Select Facebook Login Select Website 
-Select Facbook Login Settings Enter the Valid OAuth redirect as ' . $boardurl . '/sources/ext/hybridauth?hauth_done=Facebook 
+Select Facebook Login Settings Enter the Valid OAuth redirect as ' . $boardurl . '/sources/ext/hybridauth?hauth_done=Facebook 
 Copy your App ID and App Secret to corresponding fields in the addon settings';
 
 $txt['ext_enable_google'] = 'Enable Google Login';

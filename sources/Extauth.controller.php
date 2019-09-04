@@ -55,6 +55,12 @@ class Extauth_Controller extends Action_Controller
 		require_once(SUBSDIR . '/Extauth.subs.php');
 		require_once(EXTDIR . '/hybridauth/Hybrid/Auth.php');
 
+		// Load in some 1.0 compatibility functions so this controller works with 1.0 and 1.1
+		if (defined('FORUM_VERSION') && substr(FORUM_VERSION, 8, 3) === '1.1')
+		{
+			require_once(SOURCEDIR . '/Errors.php');
+		}
+
 		$this->provider = isset($_GET['provider']) ? ucfirst(trim($_GET['provider'])) : '';
 		$this->member = isset($_GET['member']) ? (int) $_GET['member'] : 0;
 
@@ -162,6 +168,12 @@ class Extauth_Controller extends Action_Controller
 	 */
 	private function setProviderSessionData()
 	{
+		// Not all providers provide all the data, and not all init vars.
+		$this->profile->gender = !empty($this->profile->gender) ? $this->profile->gender : '';
+		$this->profile->photoURL = !empty($this->profile->photoURL) ? $this->profile->photoURL : '';
+		$this->profile->description = !empty($this->profile->description) ? $this->profile->description : '';
+		$this->profile->webSiteURL = !empty($this->profile->webSiteURL) ? $this->profile->webSiteURL : '';
+
 		// Save data that the provider *may* have returned
 		$_SESSION['extauth_info'] = array(
 			'provider' => $this->provider,
@@ -425,7 +437,7 @@ class Extauth_Controller extends Action_Controller
 	{
 		if (defined('FORUM_VERSION') && substr(FORUM_VERSION, 8, 3) === '1.1')
 		{
-			$reg_errors = ErrorContext::context('register', 0);
+			$reg_errors = ElkArte\Errors\ErrorContext::context('register', 0);
 		}
 		else
 		{
@@ -522,7 +534,7 @@ class Extauth_Controller extends Action_Controller
 		);
 
 		// Extras that we may have received from the social network
-		$regOptions['extra_register_vars']['personal_text'] = !empty($_SESSION['extauth_info']['blurb']) ? $_SESSION['extauth_info']['blurb'] : '';
+		$regOptions['extra_register_vars']['signature'] = !empty($_SESSION['extauth_info']['blurb']) ? $_SESSION['extauth_info']['blurb'] : '';
 		$regOptions['extra_register_vars']['avatar'] = !empty($_SESSION['extauth_info']['avatar']) ? $_SESSION['extauth_info']['avatar'] : '';
 		$regOptions['extra_register_vars']['website_url'] = !empty($_SESSION['extauth_info']['website']) ? $_SESSION['extauth_info']['website'] : '';
 

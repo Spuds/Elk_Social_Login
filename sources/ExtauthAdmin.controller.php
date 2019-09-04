@@ -126,7 +126,13 @@ class ExtauthAdmin_Controller extends Action_Controller
 		$config_vars[] = array('desc', 'provider_services_settings_desc');
 		foreach ($providers as $id)
 		{
-			$config_vars[] = array('check', 'ext_enable_' . $id, 'postinput' => $txt['ext_api_url_' . $id], 'onchange' => 'showhideOptions(\'' . $id . '\');', 'help' => $txt['ext_api_url_' . $id . '_help']);
+			$config_vars[] = array(
+				'check', 'ext_enable_' . $id,
+				'postinput' => $txt['ext_api_url_' . $id],
+				'onchange' => 'showhideOptions(\'' . $id . '\');',
+				'helptext' => $txt['ext_api_url_' . $id . '_help'],
+				'help' => $txt['ext_api_url_' . $id . '_help']
+			);
 			$config_vars[] = array('text', 'ext_key_' . $id, 60);
 			$config_vars[] = array('text', 'ext_secret_' . $id, 60);
 			$config_vars[] = '';
