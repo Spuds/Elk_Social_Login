@@ -3,13 +3,13 @@
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2017 Spuds
+ * @copyright (c) 2021 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.3
+ * @version 1.0.6
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -133,11 +133,11 @@ function template_registration()
 						<strong', !empty($field['is_error']) ? ' class="error"' : '', '><label for="', $field['colname'], '">', $field['name'], ':</label></strong>
 						<span class="smalltext">', $field['desc'], '</span>
 					</dt>
-					<dd>', preg_replace_callback('~<(input|select|textarea) ~', create_function('$matches', '
-						global $context;
+					<dd>', preg_replace_callback('~<(input|select|textarea) ~', function($matches) {
+					global $context;
 
-						return \'<\' . $matches[1] . \' tabindex="\' . $context[\'tabindex\']++ . \'"\';
-					'), $field['input_html']), '
+					return '<' . $matches[1] . ' tabindex="' . $context['tabindex']++ . '"';
+				}, $field['input_html']), '
 					</dd>';
 
 				// Drop this one so we don't show the additional information header unless needed
@@ -200,22 +200,18 @@ function template_registration()
 				if ($field['type'] === 'label')
 					echo '
 						', $field['value'];
-
 				// Maybe it's a text box - very likely!
 				elseif (in_array($field['type'], array('int', 'float', 'text', 'password')))
 					echo '
 						<input type="', $field['type'] === 'password' ? 'password' : 'text', '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '" tabindex="', $context['tabindex']++, '" ', $field['input_attr'], ' class="input_', $field['type'] === 'password' ? 'password' : 'text', '" />';
-
 				// Maybe it's an html5 input
 				elseif (in_array($field['type'], array('url', 'search', 'date', 'email', 'color')))
 					echo '
 						<input type="', $field['type'], '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '" ', $field['input_attr'], ' class="input_', $field['type'] === 'password' ? 'password' : 'text', '" />';
-
 				// You "checking" me out? ;)
 				elseif ($field['type'] === 'check')
 					echo '
 						<input type="hidden" name="', $key, '" value="0" /><input type="checkbox" name="', $key, '" id="', $key, '" ', !empty($field['value']) ? ' checked="checked"' : '', ' value="1" tabindex="', $context['tabindex']++, '" class="input_check" ', $field['input_attr'], ' />';
-
 				// Always fun - select boxes!
 				elseif ($field['type'] === 'select')
 				{
@@ -238,7 +234,6 @@ function template_registration()
 					echo '
 						</select>';
 				}
-
 				// Something to end with?
 				if (!empty($field['postinput']))
 					echo '

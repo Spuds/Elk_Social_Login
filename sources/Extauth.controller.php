@@ -3,13 +3,13 @@
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2019 Spuds
+ * @copyright (c) 2021 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.5
+ * @version 1.0.6
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -22,21 +22,16 @@
  */
 class Extauth_Controller extends Action_Controller
 {
-	/**
-	 * @var string name of the provider, like Facebook
-	 */
+	/** @var string name of the provider, like Facebook */
 	var $provider;
-	/**
-	 * @var int member id
-	 */
+
+	/** @var int member id */
 	var $member;
-	/**
-	 * @var Hybrid_Auth
-	 */
+
+	/** @var Hybrid_Auth */
 	var $hybridauth;
-	/**
-	 * @var Hybrid_Provider_Adapter
-	 */
+
+	/** @var Hybrid_Provider_Adapter */
 	var $profile;
 
 	/**
@@ -53,7 +48,9 @@ class Extauth_Controller extends Action_Controller
 		}
 
 		require_once(SUBSDIR . '/Extauth.subs.php');
-		require_once(EXTDIR . '/hybridauth/Hybrid/Auth.php');
+		Elk_Autoloader::instance()->register(EXTDIR . '/hybridauth');
+
+		//require_once(EXTDIR . '/hybridauth/Hybrid/Auth.php');
 
 		// Load in some 1.0 compatibility functions so this controller works with 1.0 and 1.1
 		if (defined('FORUM_VERSION') && substr(FORUM_VERSION, 8, 3) === '1.1')
@@ -202,8 +199,7 @@ class Extauth_Controller extends Action_Controller
 	 *
 	 * - Try to authenticate the user with the provider
 	 * - User will be redirected to the provider for authentication
-	 * - If he already connected/authorized, then it will
-	 * return an instance of the adapter
+	 * - If he already connected/authorized, then it will return an instance of the adapter
 	 * - Profile information that is available from the provider will be loaded
 	 */
 	private function getAdapterProfile()
@@ -215,17 +211,24 @@ class Extauth_Controller extends Action_Controller
 
 			// Get what we can about this user from the provider
 			$this->profile = $adapter->getUserProfile();
+
+			// Thats all we need for now
+			$adapter->logout();
 		}
 		catch (Exception $e)
 		{
-			// If we fail, log out all providers and try again
-			$this->hybridauth->logoutAllProviders();
-			$this->initHybridAuth();
-			$adapter = $this->hybridauth->authenticate($this->provider);
-			$this->profile = $adapter->getUserProfile();
-		}
+			global $txt;
 
-		unset($_SESSION['request_referer']);
+			// If we fail, log out all providers
+			$this->hybridauth->logoutAllProviders();
+
+			$message = $txt['extauth_error_' . $e->getCode()] . '<br />' . substr($e->getMessage(), 0, 512);
+			fatal_error($message, false);
+		}
+		finally
+		{
+			unset($_SESSION['extauth_info'], $_SESSION['request_referer']);
+		}
 	}
 
 	/**
@@ -239,26 +242,15 @@ class Extauth_Controller extends Action_Controller
 		if (!empty($this->provider) && !empty($this->member))
 		{
 			// Make an OAuth connection to the provider
-			try
-			{
-				$this->initHybridAuth();
-				$this->getAdapterProfile();
-				$member_found = memberByExtUID($this->provider, $this->profile->identifier);
+			$this->initHybridAuth();
+			$this->getAdapterProfile();
+			$member_found = memberByExtUID($this->provider, $this->profile->identifier);
 
-				// If the member is not already linked then save this valid authorization
-				if (!$member_found)
-				{
-					// Create an authentication entry in the db
-					addAuth($this->member, $this->provider, $this->profile->identifier, $this->profile->displayName);
-				}
-			}
-			catch (Exception $e)
+			// If the member is not already linked then save this valid authorization
+			if (!$member_found)
 			{
-				global $txt;
-
-				unset($_SESSION['extauth_info']);
-				$message = $txt['extauth_error_' . $e->getCode()] . ' :: ' . substr($e->getMessage(), 0, 128);
-				fatal_error($message, false);
+				// Create an authentication entry in the db
+				addAuth($this->member, $this->provider, $this->profile->identifier, $this->profile->displayName);
 			}
 
 			// Back to the profile page
@@ -274,22 +266,12 @@ class Extauth_Controller extends Action_Controller
 	public function action_deauth()
 	{
 		// If they are using this, log them out
-		try
-		{
-			$this->initHybridAuth();
-			if (Hybrid_Auth::isConnectedWith($this->provider))
-			{
-				$adapter = Hybrid_Auth::getAdapter($this->provider);
-				$adapter->logout();
-			}
-		}
-		catch (Exception $e)
-		{
-			global $txt;
+		$this->initHybridAuth();
 
-			unset($_SESSION['extauth_info']);
-			$message = $txt['extauth_error_' . $e->getCode()] . ' :: ' . substr($e->getMessage(), 0, 128);
-			fatal_error($message, false);
+		if (Hybrid_Auth::isConnectedWith($this->provider))
+		{
+			$adapter = Hybrid_Auth::getAdapter($this->provider);
+			$adapter->logout();
 		}
 
 		// Remove entry from db
@@ -338,13 +320,15 @@ class Extauth_Controller extends Action_Controller
 		{
 			fatal_lang_error('registration_disabled', false);
 		}
+
 		// You are not a guest, so you are a member - and members don't get to register twice!
-		elseif (empty($user_info['is_guest']))
+		if (empty($user_info['is_guest']))
 		{
 			redirectexit();
 		}
+
 		// Need a valid provider to authenticate with
-		elseif (empty($context['provider']) || !in_array($context['provider'], extauth_enabled_providers()))
+		if (empty($context['provider']) || !in_array($context['provider'], extauth_enabled_providers()))
 		{
 			redirectexit();
 		}
@@ -359,6 +343,7 @@ class Extauth_Controller extends Action_Controller
 		if ($context['require_agreement'])
 		{
 			// Have we got a localized one?
+			$context['agreement'] = '';
 			if (file_exists(BOARDDIR . '/agreement.' . $user_info['language'] . '.txt'))
 			{
 				$context['agreement'] = parse_bbc(file_get_contents(BOARDDIR . '/agreement.' . $user_info['language'] . '.txt'), true, 'agreement_' . $user_info['language']);
@@ -366,10 +351,6 @@ class Extauth_Controller extends Action_Controller
 			elseif (file_exists(BOARDDIR . '/agreement.txt'))
 			{
 				$context['agreement'] = parse_bbc(file_get_contents(BOARDDIR . '/agreement.txt'), true, 'agreement');
-			}
-			else
-			{
-				$context['agreement'] = '';
 			}
 
 			// Nothing to show, lets disable registration and inform the admin of this error
@@ -649,7 +630,7 @@ class Extauth_Controller extends Action_Controller
 		{
 			call_integration_hook('integrate_activate', array($regOptions['username']));
 			setLoginCookie(60 * $modSettings['cookieTime'], $memberID, hash('sha256', $regOptions['password'] . $regOptions['register_vars']['password_salt']));
-			redirectexit('action=extauth;provider=' .  $_SESSION['extauth_info']['provider'], $context['server']['needs_login_fix']);
+			redirectexit('action=extauth;provider=' . $_SESSION['extauth_info']['provider'], $context['server']['needs_login_fix']);
 		}
 
 		return true;

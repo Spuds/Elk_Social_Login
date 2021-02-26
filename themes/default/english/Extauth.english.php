@@ -97,7 +97,7 @@ $txt['ext_key_github'] = 'GitHub client id';
 $txt['ext_secret_github'] = 'GitHub client secret';
 $txt['ext_api_url_github'] = '<a class="linkbutton" href="https://github.com/settings/applications/new" target="_blank">Key Registration</a>';
 $txt['ext_api_url_github_help'] = 'Register a new OAuth application. 
-Enter the Application Name, and your website home URL. 
+Enter the Application Name, and your website homepage URL. 
 Use the following for the Authorization callback URL ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Github 
 Enter the client id/secret to the corresponding fields in the addon settings';
 

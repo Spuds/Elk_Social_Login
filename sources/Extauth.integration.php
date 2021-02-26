@@ -3,13 +3,13 @@
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2019 Spuds
+ * @copyright (c) 2021 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.5
+ * @version 1.0.6
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -35,7 +35,8 @@ function ipa_extauth(&$profile_areas)
 		return;
 	}
 
-	$profile_areas['edit_profile']['areas'] = elk_array_insert($profile_areas['edit_profile']['areas'], 'account',
+	$profile_areas['edit_profile']['areas'] =
+		elk_array_insert($profile_areas['edit_profile']['areas'], 'account',
 		array(
 			'extauth' => array(
 				'label' => $txt['connect_accounts'],
@@ -124,7 +125,8 @@ function iarb_extauth()
 	}
 
 	// Registration Screen ?
-	if ((!empty($context['site_action']) && $context['site_action'] === 'register') && (isset($_GET['action']) && $_GET['action'] === 'register'))
+	if ((!empty($context['site_action']) && $context['site_action'] === 'register')
+		&& (isset($_GET['action']) && $_GET['action'] === 'register'))
 	{
 		// Load the enabled providers
 		require_once(SUBSDIR . '/Extauth.subs.php');
@@ -140,7 +142,7 @@ function iarb_extauth()
 /**
  * Integration hook, integrate_load_theme, called from load.php,
  *
- * Used to add th template to the header where we add the icons next to the login bar
+ * Used to add the template to the header where we add the icons next to the login bar
  */
 function ilt_extauth()
 {

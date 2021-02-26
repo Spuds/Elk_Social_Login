@@ -12,7 +12,7 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 {
 	// default permissions
 	// (no scope) => public read-only access (includes public user profile info, public repo info, and gists).
-	public $scope = "";
+	public $scope = "user:email";
 
 	/**
 	* IDp wrappers initializer
@@ -25,6 +25,9 @@ class Hybrid_Providers_GitHub extends Hybrid_Provider_Model_OAuth2
 		$this->api->api_base_url  = "https://api.github.com/";
 		$this->api->authorize_url = "https://github.com/login/oauth/authorize";
 		$this->api->token_url     = "https://github.com/login/oauth/access_token";
+
+		// GitHub requires an access_token in the header
+		$this->api->curl_header = array("Authorization: token " . $this->api->access_token);
 	}
 
 	/**
