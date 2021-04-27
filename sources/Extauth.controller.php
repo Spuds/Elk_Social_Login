@@ -23,16 +23,16 @@
 class Extauth_Controller extends Action_Controller
 {
 	/** @var string name of the provider, like Facebook */
-	var $provider;
+	public $provider;
 
 	/** @var int member id */
-	var $member;
+	public $member;
 
 	/** @var Hybrid_Auth */
-	var $hybridauth;
+	public $hybridauth;
 
 	/** @var Hybrid_Provider_Adapter */
-	var $profile;
+	public $profile;
 
 	/**
 	 * Called on entry, used to add any dependency's
@@ -121,7 +121,7 @@ class Extauth_Controller extends Action_Controller
 			$member_found = memberByExtUID($this->provider, $this->profile->identifier);
 
 			// If the member was already linked, its a login!
-			if ($member_found)
+			if (!empty($member_found))
 			{
 				$user_settings = $member_found;
 
@@ -247,7 +247,7 @@ class Extauth_Controller extends Action_Controller
 			$member_found = memberByExtUID($this->provider, $this->profile->identifier);
 
 			// If the member is not already linked then save this valid authorization
-			if (!$member_found)
+			if (!empty($member_found))
 			{
 				// Create an authentication entry in the db
 				addAuth($this->member, $this->provider, $this->profile->identifier, $this->profile->displayName);
@@ -346,11 +346,11 @@ class Extauth_Controller extends Action_Controller
 			$context['agreement'] = '';
 			if (file_exists(BOARDDIR . '/agreement.' . $user_info['language'] . '.txt'))
 			{
-				$context['agreement'] = parse_bbc(file_get_contents(BOARDDIR . '/agreement.' . $user_info['language'] . '.txt'), true, 'agreement_' . $user_info['language']);
+				$context['agreement'] = parse_bbc(file_get_contents(BOARDDIR . '/agreement.' . $user_info['language'] . '.txt'), true);
 			}
 			elseif (file_exists(BOARDDIR . '/agreement.txt'))
 			{
-				$context['agreement'] = parse_bbc(file_get_contents(BOARDDIR . '/agreement.txt'), true, 'agreement');
+				$context['agreement'] = parse_bbc(file_get_contents(BOARDDIR . '/agreement.txt'), true);
 			}
 
 			// Nothing to show, lets disable registration and inform the admin of this error
