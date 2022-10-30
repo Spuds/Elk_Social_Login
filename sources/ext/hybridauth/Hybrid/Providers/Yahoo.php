@@ -37,7 +37,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2 {
         parent::initialize();
 
         // Provider api end-points.
-        $this->api->api_base_url = "https://social.yahooapis.com/v1/";
+        $this->api->api_base_url = "https://api.login.yahoo.com/openid/v1/";
         $this->api->authorize_url = "https://api.login.yahoo.com/oauth2/request_auth";
         $this->api->token_url = "https://api.login.yahoo.com/oauth2/get_token";
 
@@ -59,49 +59,31 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2 {
      * {@inheritdoc}
      */
     function getUserProfile() {
-        $userId = $this->getCurrentUserId();
+        $this->getCurrentUserId();
 
-        $response = $this->api->get("user/{$userId}/profile", array(
-            "format" => "json",
-        ));
+		$data = $this->api->api('userinfo');
 
-        if (!isset($response->profile)) {
-            throw new Exception("User profile request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData($response), 6);
+        if (!isset($data->sub)) {
+            throw new Exception("User profile request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData($data), 6);
         }
 
-        $data = $response->profile;
+        $this->user->profile->identifier = $data->sub ?? '';
+        $this->user->profile->firstName = $data->given_name ?? '';
+        $this->user->profile->lastName = $data->family_name ?? '';
+        $this->user->profile->displayName = isset($data->name) ? trim($data->name) : '';
+        $this->user->profile->gender = $data->gender ?? '';
+		$this->user->profile->language = $data->locale ?? '';
+		$this->user->profile->email = $data->email ?? '';
 
-        $this->user->profile->identifier = isset($data->guid) ? $data->guid : "";
-        $this->user->profile->firstName = isset($data->givenName) ? $data->givenName : "";
-        $this->user->profile->lastName = isset($data->familyName) ? $data->familyName : "";
-        $this->user->profile->displayName = isset($data->nickname) ? trim($data->nickname) : "";
-        $this->user->profile->profileURL = isset($data->profileUrl) ? $data->profileUrl : "";
-        $this->user->profile->gender = isset($data->gender) ? $data->gender : "";
+		$this->user->profile->emailVerified = !empty($data->email_verified) ? $this->user->profile->email : '';
 
-        if ($this->user->profile->gender === "F") {
-            $this->user->profile->gender = "female";
-        }
-        elseif ($this->user->profile->gender === "M") {
-            $this->user->profile->gender = "male";
-        }
-
-        if (isset($data->emails)) {
-            $email = "";
-            foreach ($data->emails as $v) {
-                if (isset($v->primary) && $v->primary) {
-                    $email = isset($v->handle) ? $v->handle : "";
-                    break;
-                }
-            }
-            $this->user->profile->email = $email;
-            $this->user->profile->emailVerified = $email;
-        }
-
-        $this->user->profile->age = isset($data->displayAge) ? $data->displayAge : "";
-        $this->user->profile->photoURL = isset($data->image) ? $data->image->imageUrl : "";
-
-        $this->user->profile->address = isset($data->location) ? $data->location : "";
-        $this->user->profile->language = isset($data->lang) ? $data->lang : "";
+		$profileImages = $data->profile_images;
+		if (isset($this->config['photo_size'])) {
+			$prop = 'image' . $this->config['photo_size'];
+		} else {
+			$prop = 'image192';
+		}
+		$this->user->profile->photoURL = $profileImages->$prop;
 
         return $this->user->profile;
     }
@@ -143,12 +125,10 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2 {
     /**
      * Returns current user id.
      *
-     * @return string
-     *   Current user ID.
      * @throws Exception
      */
     function getCurrentUserId() {
-        // Set headers to get refresh token.
+        // Set headers to get refresh token if needed
         $this->setAuthorizationHeaders("basic");
 
         // Refresh tokens if needed.
@@ -156,16 +136,6 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2 {
 
         // Set headers to make api call.
         $this->setAuthorizationHeaders("bearer");
-
-        $response = $this->api->get("me/guid", array(
-            "format" => "json",
-        ));
-
-        if (!isset($response->guid->value)) {
-            throw new Exception("User id request failed! {$this->providerId} returned an invalid response: " . Hybrid_Logger::dumpData($response));
-        }
-
-        return $response->guid->value;
     }
 
     /**
@@ -265,5 +235,4 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth2 {
                 break;
         }
     }
-
 }

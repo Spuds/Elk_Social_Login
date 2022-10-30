@@ -141,7 +141,6 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model {
    * {@inheritdoc}
    */
   function refreshToken() {
-    // have an access token?
     if ($this->api->access_token) {
       // Token is expired. Let's handle it.
       if (
@@ -162,7 +161,7 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model {
             throw new Exception("The Authorization Service has return an invalid response while requesting a new access token. " . (string) $response->error);
           }
 
-          // set new access_token
+          // Set new access_token.
           $this->api->access_token = $response->access_token;
           if (isset($response->refresh_token)) {
             $this->api->refresh_token = $response->refresh_token;
@@ -173,7 +172,7 @@ class Hybrid_Provider_Model_OAuth2 extends Hybrid_Provider_Model {
             $this->api->access_token_expires_at = time() + $response->expires_in;
           }
 
-      // re store tokens
+      // Re-store tokens.
       $this->token("access_token", $this->api->access_token);
       $this->token("refresh_token", $this->api->refresh_token);
       $this->token("expires_in", $this->api->access_token_expires_in);

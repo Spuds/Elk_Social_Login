@@ -21,7 +21,7 @@
 class Hybrid_Providers_Amazon extends Hybrid_Provider_Model_OAuth2 {
 
 	// default permissions
-	public $scope = 'profile postal_code';
+	public $scope = 'profile';
 
 	/**
 	 * IDp wrappers initializer
@@ -78,7 +78,10 @@ class Hybrid_Providers_Amazon extends Hybrid_Provider_Model_OAuth2 {
 		$this->user->profile->identifier  = @ $data->user_id;
 		$this->user->profile->email       = @ $data->email;
 		$this->user->profile->displayName = @ $data->name;
-		$this->user->profile->zip         = @ $data->postal_code;
+
+		if( empty($this->user->profile->displayName) ){
+			$this->user->profile->displayName = substr($this->user->profile->email, 0, strrpos($this->user->profile->email, '@'));
+		}
 
 		return $this->user->profile;
 	}

@@ -46,7 +46,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 	 * {@inheritdoc}
 	 */
 	function loginBegin() {
-		$parameters = array("scope" => $this->scope, "access_type" => "offline");
+		$parameters = array("scope" => $this->scope, "access_type" => "online");
 		$optionals = array("scope", "access_type", "redirect_uri", "approval_prompt", "hd", "state");
 
 		foreach ($optionals as $parameter) {

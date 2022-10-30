@@ -14,7 +14,7 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
     /**
      * {@inheritdoc}
      */
-    public $scope = 'r_liteprofile r_emailaddress w_member_social';
+    public $scope = 'r_liteprofile r_emailaddress';
 
     /**
      * The 'state' variable helps to prevent CSRF attacks,
@@ -156,6 +156,10 @@ class Hybrid_Providers_LinkedIn extends Hybrid_Provider_Model_OAuth2 {
      */
     public function setUserStatus($status, $userID = null)
     {
+		if (strpos($this->scope, 'w_member_social') === false) {
+			throw new Exception('Set user status requires w_member_social permission!');
+		}
+
         $this->refreshToken();
         if (is_string($status)) {
             $status = [
