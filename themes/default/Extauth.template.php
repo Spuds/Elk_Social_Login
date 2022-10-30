@@ -3,13 +3,13 @@
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2021 Spuds
+ * @copyright (c) 2022 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.6
+ * @version 1.1.0
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -36,12 +36,14 @@ function template_action_profile()
 			<dt class="righttext">', $provider, '</dt>';
 
 		// Remove any connected account
-		if (in_array($provider, $context['connected_providers']))
+		if (in_array($provider, $context['connected_providers'], true))
 		{
 			echo '
 			<dd>
-				<a class="linkbutton alert" href="', $scripturl, '?action=extauth;provider=', strtolower($provider), ';sa=deauth;member=', $context['member']['id'], ';', $context['session_var'], '=', $context['session_id'], '">
-					<i class="fa fa-lg fa-', strtolower($provider), '"></i>', ' ', $txt['disconnect'], '
+				<a class="linkbutton alert" href="', $scripturl, '?action=extauth;provider=', $provider, ';sa=deauth;member=', $context['member']['id'], ';', $context['session_var'], '=', $context['session_id'], '">
+					<div class="extauth_', strtolower($provider), '">
+						<span style="margin-left:2.5em"> ', $txt['disconnect'], ' ', $provider, '</span>
+					</div>
 				</a>
 			</dd>';
 		}
@@ -50,8 +52,10 @@ function template_action_profile()
 		{
 			echo '
 			<dd>
-				<a class="linkbutton" href="', $scripturl, '?action=extauth;provider=', strtolower($provider), ';sa=auth;member=', $context['member']['id'], ';', $context['session_var'], '=', $context['session_id'], '">
-					<i class="fa fa-lg fa-', strtolower($provider), '"></i>', ' ', $txt['connect'], ' ', $provider, '
+				<a class="linkbutton" href="', $scripturl, '?action=extauth;provider=', $provider, ';sa=auth;member=', $context['member']['id'], ';', $context['session_var'], '=', $context['session_id'], '">
+					<div class="extauth_', strtolower($provider), '">
+						<span style="margin-left:2.5em"> ', $txt['connect'], ' ', $provider, '</span>
+					</div>
 				</a>
 			</dd>';
 		}
@@ -85,8 +89,10 @@ function template_registration()
 
 		// Cycle through each error and display an error message.
 		foreach ($context['registration_errors'] as $error)
+		{
 			echo '
 				<li>', $error, '</li>';
+		}
 
 		echo '
 			</ul>
@@ -95,34 +101,46 @@ function template_registration()
 
 	echo '
 		<div class="content">
-			<input type="password" name="autofill_honey_pot" style="display:none" />
-			<fieldset>
-				<dl class="register_form">
+			<fieldset class="content">
+				<dl class="settings">
 					<dt>
-						<strong><label for="username">', $txt['username'], ':</label></strong>
+						<label for="username">', $txt['username'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" name="user" id="username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" class="input_text" placeholder="', $txt['username'], '" required="required" autofocus="autofocus" />
-					</dd>
+						<input type="text" name="user" id="username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', $context['username'] ?? '', '" class="input_text" placeholder="', $txt['username'], '" required="required" autofocus="autofocus" />
+					</dd>';
+
+	if ($context['insert_display_name'])
+	{
+		echo '
 					<dt>
-						<strong><label for="reserve1">', $txt['user_email_address'], ':</label></strong>
+						<label for="displayname">', $txt['display_name'], ':</label>
 					</dt>
 					<dd>
-						<input type="email" name="email" id="reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '" class="input_text" placeholder="', $txt['user_email_address'], '" required="required" />
-					</dd>
+						<input type="text" name="display" id="displayname" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', $context['display_name'] ?? '', '" class="input_text" placeholder="', $txt['display_name'], '" required="required" />
+					</dd>';
+	}
+
+	echo '
 					<dt>
-						<strong><label for="allow_email">', $txt['allow_user_email'], ':</label></strong>
+						<label for="reserve1">', $txt['user_email_address'], ':</label>
 					</dt>
 					<dd>
-						<input type="checkbox" name="allow_email" id="allow_email" tabindex="', $context['tabindex']++, '" class="input_check" />
+						<input type="email" name="email" id="reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', $context['email'] ?? '', '" class="input_text" placeholder="', $txt['user_email_address'], '" required="required" />
 					</dd>
+ 					<dt>
+ 						<label for="notify_announcements">', $txt['notify_announcements'], ':</label>
+ 					</dt>
+ 					<dd>
+ 						<input type="checkbox" name="notify_announcements" id="notify_announcements" tabindex="', $context['tabindex']++, '"', $context['notify_announcements'] ? ' checked="checked"' : '', ' class="input_check" />
+ 					</dd>
 				</dl>';
 
 	// If there is any field marked as required, show it here!
 	if (!empty($context['custom_fields_required']) && !empty($context['custom_fields']))
 	{
 		echo '
-				<dl class="register_form">';
+				<dl class="settings">';
 
 		foreach ($context['custom_fields'] as $key => $field)
 		{
@@ -130,15 +148,14 @@ function template_registration()
 			{
 				echo '
 					<dt>
-						<strong', !empty($field['is_error']) ? ' class="error"' : '', '><label for="', $field['colname'], '">', $field['name'], ':</label></strong>
+						<label ', !empty($field['is_error']) ? ' class="error"' : '', ' for="', $field['colname'], '">', $field['name'], ':</label>
 						<span class="smalltext">', $field['desc'], '</span>
 					</dt>
-					<dd>', preg_replace_callback('~<(input|select|textarea) ~', function($matches) {
+					<dd>', preg_replace_callback('~<(input|select|textarea) ~', static function ($matches) {
 					global $context;
 
-					return '<' . $matches[1] . ' tabindex="' . $context['tabindex']++ . '"';
-				}, $field['input_html']), '
-					</dd>';
+					return '<' . $matches[1] . ' tabindex="' . ($context['tabindex']++) . '"';
+				}, $field['input_html']), '</dd>';
 
 				// Drop this one so we don't show the additional information header unless needed
 				unset($context['custom_fields'][$key]);
@@ -157,10 +174,11 @@ function template_registration()
 	if (!empty($context['profile_fields']) || !empty($context['custom_fields']))
 	{
 		echo '
-		<h3 class="category_header">', $txt['additional_information'], '</h3>
+		<div class="separator"></div>
+		<h2 class="category_header">', $txt['additional_information'], '</h2>
 		<div class="content">
 			<fieldset>
-				<dl class="register_form" id="custom_group">';
+				<dl class="settings" id="custom_group">';
 	}
 
 	if (!empty($context['profile_fields']))
@@ -180,7 +198,7 @@ function template_registration()
 			{
 				echo '
 					<dt>
-						<strong', !empty($field['is_error']) ? ' class="error"' : '', '>', $field['label'], ':</strong>';
+						<label', !empty($field['is_error']) ? ' class="error"' : '', '>', $field['label'], ':</label>';
 
 				// Does it have any subtext to show?
 				if (!empty($field['subtext']))
@@ -226,9 +244,13 @@ function template_registration()
 
 						// Assuming we now have some!
 						if (is_array($field['options']))
+						{
 							foreach ($field['options'] as $value => $name)
+							{
 								echo '
 							<option value="', $value, '" ', $value == $field['value'] ? 'selected="selected"' : '', '>', $name, '</option>';
+							}
+						}
 					}
 
 					echo '
@@ -269,16 +291,53 @@ function template_registration()
 		</div>';
 	}
 
-	if ($context['require_agreement'])
+	if ($context['require_agreement'] || $context['require_privacypol'])
 	{
 		echo '
-		<div id="agreement_box">
-			', $context['agreement'], '
-		</div>
-		<div class="centertext">
-			<input id="checkbox_agreement" name="checkbox_agreement" type="checkbox"', ($context['registration_passed_agreement'] ? ' checked' : ''), ' tabindex="', $context['tabindex']++, '">
-			<label for="checkbox_agreement">', $txt['checkbox_agreement'], '</label>
-		</div>';
+			<fieldset class="content">';
+
+		if ($context['require_agreement'])
+		{
+			echo '
+				<h2 class="category_header">', $txt['registration_agreement'], '</h2>
+				<div id="agreement_box">
+					', $context['agreement'], '
+				</div>
+				<label for="checkbox_agreement">
+					<input type="checkbox" name="checkbox_agreement" id="checkbox_agreement" value="1"', ($context['registration_passed_agreement'] ? ' checked="checked"' : ''), ' tabindex="', $context['tabindex']++, '" />
+					', $txt['checkbox_agreement'], '
+				</label>';
+		}
+
+		if ($context['require_privacypol'])
+		{
+			echo '
+				<h2 class="category_header">', $txt['registration_privacy_policy'], '</h2>
+				<div id="privacypol_box">
+					', $context['privacy_policy'], '
+				</div>
+				<label for="checkbox_privacypol">
+					<input type="checkbox" name="checkbox_privacypol" id="checkbox_privacypol" value="1"', ($context['registration_passed_privacypol'] ? ' checked="checked"' : ''), ' tabindex="', $context['tabindex']++, '" />
+					', $txt['checkbox_privacypol'], '
+				</label>';
+		}
+
+		if (!empty($context['languages']))
+		{
+			echo '
+				<br />
+				<select id="agreement_lang" class="input_select">';
+			foreach ($context['languages'] as $key => $val)
+			{
+				echo '
+					<option value="', $key, '"', !empty($val['selected']) ? ' selected="selected"' : '', '>', $val['name'], '</option>';
+			}
+			echo '
+				</select>';
+		}
+
+		echo '
+			</fieldset>';
 	}
 
 	echo '
@@ -287,7 +346,9 @@ function template_registration()
 			<input type="hidden" name="', $context['register_token_var'], '" value="', $context['register_token'], '" />
 			<input type="hidden" name="provider" value="', $context['provider'], '" />
 			<button type="submit" class="linkbutton">
-				<i class="fa fa-lg fa-', strtolower($context['provider']), '"></i> ', $txt['register_with'], ' ', ucwords($context['provider']), '
+				<div class="extauth_', strtolower($context['provider']), '">
+					<span style="margin-left:2.5em"> ', $txt['register_with'], ' ', $context['provider'], '</span>
+				</div>
 			</button>
 		</div>
 	</form>';
@@ -317,11 +378,9 @@ function template_extauth_login_below()
 	{
 		echo '
 				<li>
-					<a href="', $scripturl, '?action=extauth;provider=', strtolower($provider), ';', $context['session_var'], '=', $context['session_id'], '">
-						<span class="fa-stack fa-3x">
-							<i class="fa fa-square fa-stack-2x"></i>
-							<i class="fa fa-stack-1x fa-inverse fa-', strtolower($provider), '"></i>
-						</span>
+					<a href="', $scripturl, '?action=extauth;provider=', $provider, ';', $context['session_var'], '=', $context['session_id'], '" title="', $txt['login_with'], $provider, '" >
+						<div class="extauth_icon extauth_', strtolower($provider), '"></div>
+						<div class="centertext">', $provider, '</div>
 					</a>
 				</li>';
 	}
@@ -340,29 +399,28 @@ function template_extauth_register_above()
 	global $context, $scripturl, $txt;
 
 	echo '
-		<h2 class="category_header hdicon cat_img_login">
+		<h2 class="category_header">
 			', $txt['extauth_register'], '
 		</h2>
-		<p class="infobox">', $txt['extauth_register_desc'], '</p>
 		<div class="roundframe">
+			<p class="description">', $txt['extauth_register_desc'], '</p>
 			<ul class="extauth_icons">';
 
 	foreach ($context['enabled_providers'] as $provider)
 	{
 		echo '
 				<li>
-					<a href="', $scripturl, '?action=extauth;provider=', strtolower($provider), ';', $context['session_var'], '=', $context['session_id'], '">
-						<span class="fa-stack fa-3x">
-							<i class="fa fa-square fa-stack-2x extstack"></i>
-							<i class="fa fa-stack-1x fa-inverse fa-', strtolower($provider), '"></i>
-						</span>
+					<a href="', $scripturl, '?action=extauth;provider=', $provider, ';', $context['session_var'], '=', $context['session_id'], '" title="', $txt['register_with'], $provider, '" >
+						<div class="extauth_icon extauth_', strtolower($provider), '"></div>
+						<div class="centertext">', $provider, '</div>
 					</a>
 				</li>';
 	}
 
 	echo '
 			</ul>
-		</div>';
+		</div>
+		<br />';
 }
 
 /**
@@ -370,21 +428,18 @@ function template_extauth_register_above()
  */
 function template_th_extauth_icons()
 {
-	global $context, $scripturl;
+	global $context, $scripturl, $txt;
 
 	echo '
 	<div id="extauth_th_icons">
-		<ul>';
+		<ul class="extauth_th_icons">';
 
 	foreach ($context['enabled_providers'] as $provider)
 	{
 		echo '
-			<li style="display: inline">
-				<a href="', $scripturl, '?action=extauth;provider=', strtolower($provider), ';', $context['session_var'], '=', $context['session_id'], '">
-					<span class="fa-stack">
-						<i class="fa fa-square fa-stack-2x extstack"></i>
-						<i class="fa fa-stack-1x fa-inverse fa-', strtolower($provider), '"></i>
-					</span>
+			<li>
+				<a href="', $scripturl, '?action=extauth;provider=', $provider, ';', $context['session_var'], '=', $context['session_id'], '">
+					<div class="extauth_th_icon extauth_', strtolower($provider), '" title="', $txt['login_with'], $provider,'"></div>
 				</a>
 			</li>';
 	}
