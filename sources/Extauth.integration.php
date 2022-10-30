@@ -3,13 +3,13 @@
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2021 Spuds
+ * @copyright (c) 2022 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.6
+ * @version 1.1.0
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -29,7 +29,7 @@ function ipa_extauth(&$profile_areas)
 {
 	global $user_info, $txt, $modSettings;
 
-	// No need to show these profile option to guests or if the addon is off
+	// No need to show these profile options to guests, or if the addon is off
 	if ($user_info['is_guest'] || empty($modSettings['extauth_master']))
 	{
 		return;
@@ -37,20 +37,20 @@ function ipa_extauth(&$profile_areas)
 
 	$profile_areas['edit_profile']['areas'] =
 		elk_array_insert($profile_areas['edit_profile']['areas'], 'account',
-		array(
-			'extauth' => array(
-				'label' => $txt['connect_accounts'],
-				'file' => 'Extauth.controller.php',
-				'controller' => 'Extauth_Controller',
-				'function' => 'action_profile',
-				'sc' => 'post',
-				'token' => 'profile-ea%u',
-				'permission' => array(
-					'own' => array('profile_identity_any', 'profile_identity_own'),
-					'any' => array('profile_identity_any'),
+			array(
+				'extauth' => array(
+					'label' => $txt['connect_accounts'],
+					'file' => 'Extauth.controller.php',
+					'controller' => 'Extauth_Controller',
+					'function' => 'action_profile',
+					'sc' => 'post',
+					'token' => 'profile-ea%u',
+					'permission' => array(
+						'own' => array('profile_identity_any', 'profile_identity_own'),
+						'any' => array('profile_identity_any'),
+					),
 				),
-			),
-		), 'after');
+			), 'after');
 }
 
 /**
@@ -106,7 +106,7 @@ function iaab_extauth()
 		require_once(SUBSDIR . '/Extauth.subs.php');
 		$context['enabled_providers'] = extauth_enabled_providers();
 
-		Template_Layers::getInstance()->addBegin('extauth_login');
+		Template_Layers::instance()->addBegin('extauth_login');
 	}
 }
 
@@ -134,7 +134,7 @@ function iarb_extauth()
 
 		if ($modSettings['requireAgreement'] && empty($_POST['accept_agreement']))
 		{
-			Template_Layers::getInstance()->addBegin('extauth_register');
+			Template_Layers::instance()->addBegin('extauth_register');
 		}
 	}
 }
@@ -166,21 +166,6 @@ function ilt_extauth()
 }
 
 /**
- * Integration hook, integrate_init_theme, Called from Load.php,
- *
- * Used here to turn on FA support in ElkArte 1.1
- */
-function iit_extauth()
-{
-	global $modSettings;
-
-	if (empty($modSettings['require_font-awesome']))
-	{
-		$modSettings['require_font-awesome'] = true;
-	}
-}
-
-/**
  * Integration hook, integrate_delete_members, called from Members.subs
  *
  * Used to remove social logins on account deletion
@@ -191,10 +176,11 @@ function idm_extauth($users)
 {
 	$db = database();
 
-	// Remove individual OAuth settings.
+	// Remove individual Auth settings.
 	$db->query('', '
 		DELETE FROM {db_prefix}oauth2_authentications
-		WHERE id_member IN ({array_int:users})',
+		WHERE 
+			id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)

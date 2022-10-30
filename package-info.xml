@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
-<!DOCTYPE package-info SYSTEM "http://www.elkarte.net/site/package-info">
+<!DOCTYPE package-info SYSTEM "https://www.elkarte.net/site/package-info">
 <!--
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2021 Spuds
+ * @copyright (c) 2022 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.6
+ * @version 1.1.0
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -21,34 +21,8 @@
 <package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:elk="http://www.elkarte.net/">
 	<id>Spuds:ExternalAuth</id>
 	<name>External Authentication</name>
-	<version>1.0.6</version>
+	<version>1.1.0</version>
 	<type>addon</type>
-	<install for="1.0 - 1.0.99">
-		<readme type="inline">This will install External Authentication Addon for Elkarte.</readme>
-		<database>install.php</database>
-		<require-dir name="sources/ext" destination="SOURCEDIR" />
-		<require-file name="sources/Extauth.controller.php" destination="CONTROLLERDIR" />
-		<require-file name="sources/ExtauthAdmin.controller.php" destination="ADMINDIR" />
-		<require-file name="sources/Extauth.subs.php" destination="SUBSDIR" />
-		<require-file name="sources/Extauth.integration.php" destination="SOURCEDIR" />
-		<require-file name="themes/default/Extauth.template.php" destination="THEMEDIR" />
-		<require-file name="themes/default/Extauth.css" destination="THEMEDIR/css" />
-		<require-file name="themes/default/english/Extauth.english.php" destination="LANGUAGEDIR/english" />
-		<redirect url="index.php?action=admin;area=regcenter;sa=extauth" timeout="4000" />
-		<code>add_remove_hooks.php</code>
-	</install>
-	<uninstall for="1.0 - 1.0.99">
-		<readme type="inline">This will uninstall the External Authentication Addon for Elkarte.</readme>
-		<code>add_remove_hooks.php</code>
-		<remove-dir name="EXTDIR/hybridauth" />
-		<remove-file name="CONTROLLERDIR/Extauth.controller.php" />
-		<remove-file name="ADMINDIR/ExtauthAdmin.controller.php" />
-		<remove-file name="SUBSDIR/Extauth.subs.php" />
-		<remove-file name="SOURCEDIR/Extauth.integration.php" />
-		<remove-file name="THEMEDIR/Extauth.template.php" />
-		<remove-file name="THEMEDIR/css/Extauth.css" />
-		<remove-file name="LANGUAGEDIR/english/Extauth.english.php" />
-	</uninstall>
 	<install for="1.1 - 1.1.99">
 		<readme type="inline">This will install External Authentication Addon for Elkarte.</readme>
 		<database>install.php</database>
@@ -58,7 +32,7 @@
 		<require-file name="sources/Extauth.subs.php" destination="SUBSDIR" />
 		<require-file name="sources/Extauth.integration.php" destination="SOURCEDIR" />
 		<require-file name="themes/default/Extauth.template.php" destination="THEMEDIR" />
-		<require-file name="themes/default/1.1/Extauth.css" destination="THEMEDIR/css" />
+		<require-file name="themes/default/Extauth.css" destination="THEMEDIR/css" />
 		<require-file name="themes/default/english/Extauth.english.php" destination="LANGUAGEDIR/english" />
 		<redirect url="index.php?action=admin;area=regcenter;sa=extauth" timeout="4000" />
 		<code>add_remove_hooks.php</code>

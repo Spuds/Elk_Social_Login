@@ -5,9 +5,9 @@
  */
 
 // If we have found SSI.php and we are outside of ElkArte, then we are running standalone.
-if (file_exists(dirname(__FILE__) . '/SSI.php') && !defined('ELK'))
+if (file_exists(__DIR__ . '/SSI.php') && !defined('ELK'))
 {
-	require_once(dirname(__FILE__) . '/SSI.php');
+	require_once(__DIR__ . '/SSI.php');
 }
 // If we are outside ElkArte and can't find SSI.php, then throw an error
 elseif (!defined('ELK'))
@@ -24,7 +24,6 @@ $hook_functions = array(
 	'integrate_action_register_before' => array('function' => 'iarb_extauth', 'file' => 'SOURCEDIR/Extauth.integration.php'),
 	'integrate_delete_members' => array('function' => 'idm_extauth', 'file' => 'SOURCEDIR/Extauth.integration.php'),
 	'integrate_load_theme' => array('function' => 'ilt_extauth', 'file' => 'SOURCEDIR/Extauth.integration.php'),
-	'integrate_init_theme' => array('function' => 'iit_extauth', 'file' => 'SOURCEDIR/Extauth.integration.php'),
 );
 
 // Adding or removing them?
