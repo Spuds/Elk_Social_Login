@@ -2,21 +2,22 @@
 global $boardurl;
 
 // Admin / Profile / Etc. strings
-$txt['extauth_master'] = 'Enable the addon';
-$txt['extauth_loginbar'] = 'Show social login icons next to the login bar (if enabled)';
-$txt['extauth_noemail'] = 'Don\'t require email validation if registering with social media.';
+$txt['extauth_master'] = 'Enable External Authentication';
+$txt['extauth_loginbar'] = 'Show social/provider login icons next to the login bar';
+$txt['extauth_noemail'] = 'Do not require email validation if registering with an external provider.';
 $txt['extauth_missing_requirements'] = '<p class="error">You must have both the Curl and JSON modules enabled on your server.</p>';
 $txt['connected_accounts'] = 'Connected Accounts';
 $txt['connect_accounts'] = 'Connect Accounts';
-$txt['provider_services'] = 'OAuth Providers';
-$txt['extauth_login'] = 'Login with your Social Network Account';
-$txt['extauth_register'] = 'Register using your Social Network Account';
-$txt['extauth_register_desc'] = 'You can register either by choosing your <big><u><strong>existing</strong></u></big> social network account, <big><u><strong>or continue below</strong></u></big> to register for a new account.';
-$txt['connected_accounts_desc'] = 'These are external accounts that can be connected to your account on this site. By linking to an external account, you can use that service to login here.';
-$txt['disconnect'] = 'Disconnect Account';
-$txt['connect'] = 'Connect using';
-$txt['register_with'] = 'Register using';
-$txt['extauth_reg_notice'] = 'If you already have an <strong>existing account</strong> on this site, then simply <a class="linkbutton" href="' . $boardurl . '/index.php?action=login">Login</a> normally and then make connections (Modify Profile -> Connect Accounts) to the social networks you wish to use.';
+$txt['provider_services'] = 'Authentication Providers';
+$txt['extauth_login'] = 'Sign in using a social network/identity provider';
+$txt['extauth_register'] = 'Register using your existing social network/identity provider';
+$txt['extauth_register_desc'] = 'You can either register using an <big><strong>existing</strong></big> social network account by selecting one of the icons below, <big><strong>Or register</strong></big> using the standard registration form.';
+$txt['connected_accounts_desc'] = 'The following providers can be connected to your site account. By connecting to an external account, you can use that service to login here.';
+$txt['disconnect'] = 'Disconnect Accounts';
+$txt['connect'] = 'Connect';
+$txt['login_with'] = 'Login with: ';
+$txt['register_with'] = 'Register using ';
+$txt['extauth_reg_notice'] = 'If you already have an <strong>existing account</strong> on this site, then <a class="linkbutton" href="' . $boardurl . '/index.php?action=login">Login</a> normally, then make connections (Modify Profile -> Connect Accounts) to the social networks you wish to use for login.';
 $txt['extauth_register'] = 'Register using your existing Social Network Account';
 $txt['provider_services_settings'] = 'Provider Account Keys';
 $txt['provider_services_settings_desc'] = 'Select the social networks that you would like to use by ticking their checkboxes.
@@ -26,6 +27,11 @@ Each social network will require that you register your website to their API bef
 To be able to use this addon, you must therefore register your website with each social network that you enable. This process is straightforward, takes only a couple of minutes and has to be done only once for each provider.
 <br />
 Use the help [?] button for the steps required for each social network and the registration button to take you to that providers API registration screen.';
+
+// Error responses from hybridauth
+$txt['curl_error_message'] = 'Curl error message';
+$txt['raw_api_response'] = 'Raw API Response';
+$txt['hybridauth_error'] = 'Error Response';
 
 // Error responses from hybridauth
 $txt['extauth_error_0'] = 'Unspecified error';
@@ -38,7 +44,7 @@ $txt['extauth_error_6'] = 'User profile request failed';
 $txt['extauth_error_7'] = 'User not connected to the provider';
 $txt['extauth_error_8'] = 'Provider does not support this feature';
 
-// All of the providers
+// All the providers this addon supports
 $txt['ext_enable_facebook'] = 'Enable Facebook Login';
 $txt['ext_key_facebook'] = 'Facebook application id';
 $txt['ext_secret_facebook'] = 'Facebook application secret';
@@ -55,23 +61,24 @@ $txt['ext_key_google'] = 'Google client id';
 $txt['ext_secret_google'] = 'Google client secret';
 $txt['ext_api_url_google'] = '<a class="linkbutton" href="https://console.cloud.google.com/apis/credentials" target="_blank">Key Registration</a>';
 $txt['ext_api_url_google_help'] = 'Start a new project, you will then see the API Manager for you new Project. 
-Select OAuth consent screen.  The consent screen will be shown to users whenever you request access to their 
-private data using your client ID. Fill out any required fields such as the site url and logo 
+Select OAuth consent screen.  This consent screen will be shown to users whenever you request access to their 
+data using your client ID. Fill out all required fields such as the site url, contact email, and logo.  You also need to enable the email and profile "scopes".
 Select Credentials -> Create Credentials -> OAuth Client ID. 
-Select Web application, enter this URL in the [Authorized redirect URIs] ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Google 
+Select Web application, enter the following for the [Authorized redirect URIs] ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Google 
 Copy and past the created application credentials (ID and Secret) to the corresponding fields in the addon settings.';
 
 $txt['ext_enable_twitter'] = 'Enable Twitter Login';
 $txt['ext_key_twitter'] = 'Twitter consumer key';
 $txt['ext_secret_twitter'] = 'Twitter consumer secret';
-$txt['ext_api_url_twitter'] = '<a class="linkbutton" href="https://dev.twitter.com/apps" target="_blank">Key Registration</a>';
-$txt['ext_api_url_twitter_help'] = 'Create a new app. 
-Fill out any required fields such as the application name and description. 
-Put your website domain in the Website field. 
-Provide this URL as the Callback URL for your application: ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Twitter 
-Once you have registered, copy and past the created application credentials (Consumer Key and Secret) to the corresponding fields in the addon settings. 
+$txt['ext_api_url_twitter'] = '<a class="linkbutton" href="https://developer.twitter.com/en/docs/authentication/guides/log-in-with-twitter" target="_blank">Key Registration</a>';
+$txt['ext_api_url_twitter_help'] = 'You will need a twitter Developer Account
+Create a new app at https://developer.twitter.com/en/apps
+Fill out any required fields such as the application name, description, TOS links
+Put your website domain in the Website URL field.
 Check Allow this application to be used to Sign in with Twitter. 
-Under Permissions select Read only access.';
+Provide the following as the Callback URL: ' . $boardurl . '/sources/ext/hybridauth 
+Once you have registered, copy and paste the created application credentials (Consumer Key and Secret) to the corresponding fields in the addon settings. 
+Under Permissions select Read only access and request email.';
 
 $txt['ext_enable_linkedin'] = 'Enable LinkedIn Login';
 $txt['ext_key_linkedin'] = 'LinkedIn client id';
@@ -87,9 +94,11 @@ $txt['ext_enable_yahoo'] = 'Enable Yahoo Login';
 $txt['ext_key_yahoo'] = 'Yahoo client id';
 $txt['ext_secret_yahoo'] = 'Yahoo client secret';
 $txt['ext_api_url_yahoo'] = '<a class="linkbutton" href="https://developer.yahoo.com/apps/" target="_blank">Key Registration</a>';
-$txt['ext_api_url_yahoo_help'] = 'Create a new application. 
-Fill out all required fields.  Use Web Application for the application type.  Under API permissions choose Profile -> Read Public 
-Provide this URL for the Callback Domain: ' . $boardurl . ' 
+$txt['ext_api_url_yahoo_help'] = 'See https://developer.yahoo.com/sign-in-with-yahoo/ for full documentation.
+Create a new application. 
+Fill out all required fields.  
+Provide the following for the Redirect URL: ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Yahoo
+Under OAuth Client Type choose Confidential Client.  Under API Permission choose OpenID and then Email/Profile.
 Once you have registered, copy and paste the application credentials to the corresponding fields in the addon settings.';
 
 $txt['ext_enable_github'] = 'Enable GitHub Login';
@@ -104,8 +113,9 @@ Enter the client id/secret to the corresponding fields in the addon settings';
 $txt['ext_enable_amazon'] = 'Enable Amazon Login';
 $txt['ext_key_amazon'] = 'Amazon client id';
 $txt['ext_secret_amazon'] = 'Amazon client secret';
-$txt['ext_api_url_amazon'] = '<a class="linkbutton" href="https://login.amazon.com/website" target="_blank">Key Registration</a>';
-$txt['ext_api_url_amazon_help'] = 'Register a new application. 
-Enter the Application Name, and your website home URL. 
-Use the following for the Authorization callback URL ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Amazon 
+$txt['ext_api_url_amazon'] = '<a class="linkbutton" href="https://developer.amazon.com/docs/login-with-amazon/web-docs.html" target="_blank">Key Registration</a>';
+$txt['ext_api_url_amazon_help'] = 'Sign up for an Amazon Developer ID if you do not have one.
+Create a Security Profile for LWA (Login With Amazon).
+Fill in the required fields, site name, privacy policy link, logo image
+Under the new security profile, Web settings, use the following for the Allowed Return URLs ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Amazon 
 Enter the client id/secret to the corresponding fields in the addon settings';

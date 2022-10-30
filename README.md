@@ -3,7 +3,7 @@
 ## Summary
 Allows your users to connect with one click to your ElkArte Forum using their social network accounts.
 
-Supports social networks: Facebook, Twitter, LinkedIn, Google, Yahoo, GitHub
+Supports social networks: Facebook, Twitter, LinkedIn, Google, Yahoo, GitHub, Amazon and more
 
 ## Description
 The settings for the addon are under Admin -> Members -> Registration -> OAuth Providers
@@ -22,11 +22,58 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
 * Allows for one button login to connected accounts
 
 ## New or Existing User
-**Existing users** should "Connect" their current site account with each of the social networks they intend to use.  They can do this from their profile page Modify Profile -> Connected Accounts. Once done they can simply click the appropriate social icon on the login page and be logged in to the site.
+**Existing users** can "Connect" their current account with as many of the social networks they intend to use.  They can do this from their profile page Modify Profile -> Connected Accounts. Once done they can simply click the appropriate social icon on the login page and be logged in to the site.
 
-**New users** can select a social login icon which will begin a registration process that will Connect a new site account to the chosen social site.  They will still have to accept your site agreement and any required profile fields you have enabled including email and userid.
+**New users** can select a social login icon which will begin a registration process that will create a new site account using the informatino provided by the chosen social/provider site.  They will still have to accept your site agreement and any required profile fields you have enabled including email and userid.  This simplifies the overall registartion process for you users.
 
 ## Provider Setup
+
+### Setting up Twitter
+
+* Go to https://dev.twitter.com/apps/new, you will need to sign up for a developer account
+* Create a new application
+* Fill out any required fields such as the application name, description, TOS links
+* Check Allow this application to be used to Sign in with Twitter.
+* Enter this generic Callback URL: https://YOUR-SITE-URL/hybridauth
+* Copy your Consumer Key and Consumer Secret to the corresponding fields in the addon settings
+* Under Permissions select Read only access and require Email
+
+### Setting up Google
+
+* Go to https://code.google.com/apis/console/
+* Start a new project, you will then see the API Manager for you the nes Project. 
+* Select OAuth consent screen.  This consent screen will be shown to users whenever you request access to their data using your client ID. 
+* Fill out all required fields such as the site url, contact email, and logo.  You also need to enable the email and profile "scopes".
+* Select Credentials -> Create Credentials -> OAuth Client ID. 
+* Select Web application, enter the following for the [Authorized redirect URIs] https://YOUR-SITE-URL/hybridauth/endpoint?hauth.done=Google
+* Copy and past the created application credentials (ID and Secret) to the corresponding fields in the addon settings.
+
+### Setting up Yahoo!
+
+* See https://developer.yahoo.com/sign-in-with-yahoo/ for full documentation.
+* Create a new application. 
+* Fill out all required fields.  
+* Provide the following for the Redirect URL: https://YOUR-SITE-URL/sources/ext/hybridauth?hauth.done=Yahoo
+* Under OAuth Client Type choose Confidential Client.  
+* Under API Permission choose OpenID and then Email/Profile.
+* Once you have registered the app, copy and paste the application credentials to the corresponding fields in the addon settings.
+
+### Setting up GitHub
+
+* Go to https://github.com/settings/applications/new
+* Register a new OAuth application. 
+* Enter an Application Name, and your website homepage URL. 
+* Use the following for the Authorization callback URL: https://YOUR-SITE-URL//sources/ext/hybridauth?hauth.done=Github 
+* Enter the client id/secret to the corresponding fields in the addon settings
+
+### Setting up Amazon
+
+* See https://developer.amazon.com/docs/login-with-amazon/web-docs.html
+* Sign up for an Amazon Developer ID if you do not have one.
+* Create a Security Profile for LWA (Login With Amazon).
+* Fill in the required fields, site name, privacy policy link, logo image
+* Under the new security profile, Web settings, use the following for the Allowed Return URL: https://YOUR-SITE-URL/sources/ext/hybridauth?hauth.done=Amazon 
+* Enter the client id/secret to the corresponding fields in the addon settings';
 
 ### Setting up Facebook
 
@@ -41,28 +88,7 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
     * Select Website
 * Select Facbook Login Settings
     * Enter the Valid OAuth redirect http://YOUR-SITE-URL/hybridauth/endpoint?hauth_done=Facebook
-
-### Setting up Twitter
-
-* Go to https://dev.twitter.com/apps/new
-* Create a new application
-* Enter a Callback URL: http://YOUR-SITE-URL/hybridauth/endpoint?hauth.done=Twitter
-* Copy your Consumer Key and Consumer Secret to the corresponding fields in the addon settings
-* Check Allow this application to be used to Sign in with Twitter.
-* Under Permissions select Read only access.
-
-### Setting up Google
-
-* Go to https://code.google.com/apis/console/
-* Create a new project, you will then see the API Manager for you new Project
-* Select OAuth consent screen.  The consent screen will be shown to users whenever you request access to their
-  private data using your client ID. Fill out any required fields such as the site url and logo
-* Select Credentials -> Create Credentials -> OAuth Client ID.
-* In Client ID settings:
-    * Application Type is Web Application
-    * Authorized Redirect URIs - enter the Authentication URL http://YOUR-SITE-URL/hybridauth/endpoint?hauth.done=Google
-* Copy your Client ID and Client secret to corresponding fields in the addon settings
-
+	
 ### Setting up LinkedIn
 
 * Go to https://www.linkedin.com/secure/developer
@@ -70,13 +96,3 @@ The link to setup your OAuth accounts for these sites is provided in the Admin P
     * Under default permissions select r_basicprofile and r_emailaddress
     * The Oauth2 Authorized Redirect URLs: http://YOUR-SITE-URL/hybridauth/endpoint?hauth.done=Linkedin
 * Copy the Client ID and Client secret to corresponding fields in the addon settings
-
-### Setting up Yahoo!
-
-* Go to https://developer.yahoo.com/apps/
-* Create new Application
-    * Fill out the project information
-    * Use Web Application for the application type
-    * Under API permissions choose Profile -> Read Public
-    * Callback Domain - enter http://YOUR-SITE-URL
-* Copy the Consumer Key and Consumer Secret to corresponding fields in the addon settings
