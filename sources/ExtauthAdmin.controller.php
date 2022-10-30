@@ -3,13 +3,13 @@
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2021 Spuds
+ * @copyright (c) 2022 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.6
+ * @version 1.1.0
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -22,10 +22,8 @@
  */
 class ExtauthAdmin_Controller extends Action_Controller
 {
-	/**
-	 * @var \Settings_Form
-	 */
-	var $_extauthProvider;
+	/** @var \Settings_Form */
+	protected var $extauthProvider;
 
 	public function pre_dispatch()
 	{
@@ -69,23 +67,24 @@ class ExtauthAdmin_Controller extends Action_Controller
 		// Initialize the form
 		$this->_init_extauthProvidersForm();
 
-		$config_vars = $this->_extauthProvider->settings();
-
 		// Setup the template
 		$context['sub_template'] = 'show_settings';
 		$context['page_title'] = $txt['provider_services'];
 
-		if (isset($_GET['save']))
+		if (isset($this->_req->query->save))
 		{
 			checkSession();
-			Settings_Form::save_db($config_vars);
+
+			$this->extauthProvider->setConfigValues((array) $this->_req->post);
+			$this->extauthProvider->save();
+
 			redirectexit('action=admin;area=regcenter;sa=extauth');
 		}
 
 		$context['post_url'] = $scripturl . '?action=admin;area=regcenter;save;sa=extauth';
 		$context['settings_title'] = $txt['provider_services_settings'];
 
-		Settings_Form::prepare_db($config_vars);
+		$this->extauthProvider->prepare();
 	}
 
 	/**
@@ -93,22 +92,21 @@ class ExtauthAdmin_Controller extends Action_Controller
 	 */
 	private function _init_extauthProvidersForm()
 	{
-		// This is really quite wanting.
-		require_once(SUBSDIR . '/SettingsForm.class.php');
-
 		// Instantiate the form
-		$this->_extauthProvider = new Settings_Form();
+		$this->extauthProvider = new Settings_Form(Settings_Form::DB_ADAPTER);
 
 		// Initialize it with our settings
-		$config_vars = $this->_extauthSettings();
+		$config_vars = $this->extauthSettings();
 
-		return $this->_extauthProvider->settings($config_vars);
+		$this->extauthProvider->setConfigVars($config_vars);
 	}
 
 	/**
 	 * Return configuration settings for external login providers
+	 *
+	 * @return array
 	 */
-	private function _extauthSettings()
+	protected function extauthSettings()
 	{
 		global $txt;
 
