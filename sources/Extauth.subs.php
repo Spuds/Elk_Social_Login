@@ -3,13 +3,13 @@
 /**
  * @package "ExternalAuth" External Authentication Addon for Elkarte
  * @author Spuds
- * @copyright (c) 2021 Spuds
+ * @copyright (c) 2022 Spuds
  * @license No derivative works. No warranty, explicit or implicit, provided.
  * The Software is provided under an AS-IS basis, Licensor shall never, and without any limit,
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.0.6
+ * @version 1.1.0
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -107,7 +107,7 @@ function addAuth($id_member, $provider, $uid, $username)
 		array()
 	);
 
-	return $db->affected_rows() != 0;
+	return !empty($db->affected_rows());
 }
 
 /**
@@ -132,7 +132,7 @@ function deleteAuth($id_member, $provider)
 	);
 
 	// Return the success unless an error occurred.
-	return $db->affected_rows() != 0;
+	return !empty($db->affected_rows());
 }
 
 /**
@@ -162,18 +162,6 @@ function extauth_config()
 					'secret' => $modSettings['ext_secret_' . $service]
 				)
 			);
-
-			// Special bits
-			if ($service === 'google')
-			{
-				$enabled[ucfirst($service)]['access_type'] = 'online';
-			}
-			elseif ($service === 'yahoo')
-			{
-				// Read (Public) Profile
-				// https://developer.yahoo.com/oauth2/guide/yahoo_scopes/
-				$enabled[ucfirst($service)]['scope'] = array('sdps-r');
-			}
 		}
 	}
 
@@ -209,7 +197,7 @@ function extauth_enabled_providers()
 }
 
 /**
- * Reads the Providers directory to find all interface files we can use
+ * Reads the Provider directory to find all interface files we can use
  *
  * @return array
  */
@@ -217,9 +205,14 @@ function extauth_discover_providers()
 {
 	global $txt;
 
-	$fileSystemIterator = new FilesystemIterator(EXTDIR . '/hybridauth/Hybrid/Providers');
-
 	$entries = array();
+
+	if (!is_dir(EXTDIR . '/hybridauth/Hybrid/Providers'))
+	{
+		return $entries;
+	}
+
+	$fileSystemIterator = new FilesystemIterator(EXTDIR . '/hybridauth/Hybrid/Providers');
 	foreach ($fileSystemIterator as $fileInfo)
 	{
 		$provider = strtolower($fileInfo->getBasename('.php'));
@@ -246,12 +239,12 @@ function extauth_discover_providers()
  */
 function validate_provider_url($value)
 {
-	if (strlen(trim($value)) > 0 && strpos($value, '://') === false)
+	if (strpos($value, '://') === false && strlen(trim($value)) > 0)
 	{
 		$value = 'https://' . $value;
 	}
 
-	if (strlen($value) < 8 || (substr($value, 0, 7) !== 'http://' && substr($value, 0, 8) !== 'https://'))
+	if (strlen($value) < 8 || (strpos($value, 'http://') !== 0 && strpos($value, 'https://') !== 0))
 	{
 		$value = '';
 	}
@@ -262,27 +255,50 @@ function validate_provider_url($value)
 /**
  * Validate the display name is suitable
  *
+ * - Will create a fake one if what the provider returns is taken
+ * - If generated (or not) if this is part of registration, and not a connected account, then the user
+ * will NOT be able to change this crazy name (since they don't have a password) ... they would need to
+ * reset their password for the account and then change the name, or beg the admin/mod
+ *
  * @param $value
  * @return string
  */
 function validate_provider_display_name($value)
 {
 	$value = trim(preg_replace('~[\s]~u', ' ', $value));
+	$tokenizer = new Token_Hash();
+	$fail_over = $tokenizer->generate_hash(rand(6, 10)) . '_' . $tokenizer->generate_hash(rand(4, 8));
 
-	if (trim($value) == '')
+
+	if (trim($value) === '')
 	{
-		return '';
+		return $fail_over;
 	}
 
 	if (Util::strlen($value) > 60)
 	{
-		return '';
+		return $fail_over;
 	}
 
 	require_once(SUBSDIR . '/Members.subs.php');
 	if (isReservedName($value))
 	{
-		return '';
+		// Perhaps we can save this if another member simply has taken the same "real name"
+		if (getMemberByName($value) !== false)
+		{
+			$value = str_replace(' ', '_', $value);
+			for ($i = 0; $i < 100; $i++)
+			{
+				if (getMemberByName($value) === false)
+				{
+					return $value;
+				}
+
+				$value .= '_' . $i;
+			}
+		}
+
+		return $fail_over;
 	}
 
 	return $value;
