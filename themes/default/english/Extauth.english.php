@@ -63,7 +63,7 @@ $txt['ext_api_url_google'] = '<a class="linkbutton" href="https://console.cloud.
 $txt['ext_api_url_google_help'] = 'Start a new project, you will then see the API Manager for you new Project. 
 Select OAuth consent screen.  This consent screen will be shown to users whenever you request access to their 
 data using your client ID. Fill out all required fields such as the site url, contact email, and logo.  You also need to enable the email and profile "scopes".
-Select Credentials -> Create Credentials -> OAuth Client ID. 
+Select Credentials / Create Credentials / OAuth Client ID. 
 Select Web application, enter the following for the [Authorized redirect URIs] ' . $boardurl . '/sources/ext/hybridauth?hauth.done=Google 
 Copy and past the created application credentials (ID and Secret) to the corresponding fields in the addon settings.';
 
