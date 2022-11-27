@@ -9,7 +9,7 @@
  * be liable for any damage, cost, expense or any other payment incurred by Licensee as a result
  * of Software’s actions, failure, bugs and/or any other interaction.
  *
- * @version 1.1.0
+ * @version 1.1.1
  *
  * This addon is based on code from:
  * @author Antony Derham
@@ -23,7 +23,7 @@
 class ExtauthAdmin_Controller extends Action_Controller
 {
 	/** @var \Settings_Form */
-	protected var $extauthProvider;
+	protected $extauthProvider;
 
 	public function pre_dispatch()
 	{
